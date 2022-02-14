@@ -1,0 +1,33 @@
+{
+  "HEADER": {
+    "LANGUAGE": "Czech"
+  },
+  "PAGES": {
+    "PWD_RESET_PAGE": {
+      "TITLE_RESET": "Password reset",
+      "TITLE_ACTIVATION": "Account activation",
+      "NAMESPACE": "Namespace",
+      "LOGIN": "Login",
+      "RESET_BUTTON": "Reset password",
+      "ACTIVATION_BUTTON": "Activate account",
+      "INVALID_REQUEST": "<b>Request is invalid</b>\nIt may be expired, already used or incorrect",
+      "RESET_SUCCESS": "Password was successfully reset",
+      "ACTIVATION_SUCCESS": "Account was successfully activated"
+    }
+  },
+  "SHARED_LIB": {
+    "PERUN": {
+      "COMPONENTS": {
+        "USER_DONT_EXIST": {
+          "TITLE": "Requested user (by ID or external identity) doesn't exist."
+        },
+        "PASSWORD_FORM_FIELD": {
+          "PASSWORD": "New password",
+          "PASSWORD_AGAIN": "New password again",
+          "FIELD_EMPTY": "Empty value is not allowed",
+          "PWD_DONT_MATCH": "Passwords do not match"
+        }
+      }
+    }
+  }
+}
