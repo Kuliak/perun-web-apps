@@ -12,6 +12,11 @@
       "TITLE": "Page not found",
       "MESSAGE": "The page you are trying to access is missing. If you wish to continue please click the button below that will redirect you to our home page.",
       "ACTION": "Redirect"
+    },
+    "NOT_AUTHORIZED_PAGE": {
+      "TITLE": "Not authorized",
+      "DESC": "You are not authorized to access the page you were trying to reach.",
+      "REDIRECT": "Redirect Home"
     }
   },
   "NAV": {
@@ -77,7 +82,7 @@
     "SERVICE_CONFIG": "Configure services",
     "DESTINATION_CONFIG": "Configure destinations",
     "DESTINATION": "Destinations",
-    "ATTS":  "Attributes",
+    "ATTS": "Attributes",
     "MANAGERS": "Managers",
     "SUMMARY": "Summary",
     "CANCEL": "Cancel",
@@ -377,8 +382,6 @@
           "SUBMIT_BUTTON": "Submit button",
           "HTML_COMMENT": "Custom HTML text",
           "TEXTFIELD": "Input text field",
-          "FROM_FEDERATION_SHOW": "Input text field pre-filled from external source",
-          "FROM_FEDERATION_HIDDEN": "Hidden input text pre-filled from external source",
           "VALIDATED_EMAIL": "Input text field for email",
           "SELECTIONBOX": "Single value selection from list",
           "USERNAME": "Input text field for username",
@@ -408,8 +411,6 @@
           "SUBMIT_BUTTON": "Button used to submit the form with a custom label. All other form items are checked on valid input before submission. If it fails, form is not sent.",
           "HTML_COMMENT": "Item is used to display custom HTML content anywhere on the form. Useful for explanation descriptions, dividing parts of form, etc.",
           "TEXTFIELD": "Editable text field useful to gather short text input, e.g. name, phone.",
-          "FROM_FEDERATION_SHOW": "Non-editable and visible form item. The form is submitted even on invalid input! Useful to automatically gather information provided by AUTH mechanism (IdP federation, certificate).",
-          "FROM_FEDERATION_HIDDEN": "Non-editable and hidden form item. The form is submitted even on invalid input! Useful to automatically gather information provided by AUTH mechanism (IdP federation, certificate).",
           "VALIDATED_EMAIL": "Special text field to gather and verify user`s email address. Input is checked on email address format. If a user enters a new value, then a validation email is sent. The application then can't be approved unless the provided email address is validated.",
           "SELECTIONBOX": "Simple selection box with defined custom values that user can choose.",
           "USERNAME": "Special text field to gather user`s login. It checks login availability on user input.",
@@ -527,25 +528,7 @@
       "SELECTION_APPROVED": "Approved",
       "SELECTION_REJECTED": "Rejected",
       "SHOW_GROUP_APPLICATIONS": "Show group applications",
-      "TABLE_ID": "Id",
-      "TABLE_CREATED_DATE": "Created Date",
-      "TABLE_TYPE": "Type",
-      "TABLE_STATE": "State",
-      "TABLE_GROUPS_SELECTION": "Groups applications",
-      "TABLE_SUBMITTED_BY": "Submitted by",
-      "TABLE_LOA": "LoA",
-      "TABLE_GROUP_NAME": "Group name",
-      "TABLE_MODIFIED_BY": "Modified by",
-      "TABLE_VO_ID": "Organization Id",
-      "TABLE_GROUP_ID": "Group Id",
-      "TABLE_FEDINFO": "FedInfo",
-      "TABLE_EXTSOURCENAME": "extSourceName",
-      "TABLE_EXTSOURCETYPE": "extSourceType",
-      "TABLE_MODIFIED_AT": "Modified at",
-      "TABLE_USER": "User",
-      "TABLE_CREATED_BY": "Created by",
-      "TABLE_VO_NAME": "Organization name",
-      "NO_APPLICATION_FOUND": "No applications matching search criteria found for this organization or it's groups.",
+      "NO_APPLICATION_FOUND": "No applications matching search criteria found.",
       "SHOW_ALL_DETAILS": "Show more details",
       "SHOW_LESS_DETAILS": "Show less details",
       "STATE": {
@@ -554,7 +537,7 @@
         "NEW": "Waiting for mail verification",
         "VERIFIED": "Submitted"
       },
-      "DATE" : {
+      "DATE": {
         "START": "Start date",
         "END": "End date"
       },
@@ -576,7 +559,6 @@
         "APPROVED_BY": "Approved by",
         "REJECTED_BY": "Rejected by",
         "DATE": "Date",
-        "VALUE_BY_EXTERNALS": "Value provided by external source.",
         "VERIFY": "Verify",
         "DELETE_APPLICATION_TITLE": "Delete application",
         "DELETE_APPLICATION_DESCRIPTION": "Application with following Id will be deleted.",
@@ -704,11 +686,31 @@
         "SUCCESS_REMOVED": "External source successfully removed: "
       }
     },
-    "STATISTICS":{
+    "STATISTICS": {
       "TITLE": "Statistics",
       "VO_STATUS_COUNT": "Members by organization status",
       "GROUP_STATUS_COUNT": "Members by group status"
     }
+  },
+  "APPLICATIONS_LIST": {
+    "ID": "Id",
+    "CREATED_DATE": "Created Date",
+    "TYPE": "Type",
+    "STATE": "State",
+    "GROUPS_SELECTION": "Groups applications",
+    "SUBMITTED_BY": "Submitted by",
+    "LOA": "LoA",
+    "GROUP_NAME": "Group name",
+    "MODIFIED_BY": "Modified by",
+    "VO_ID": "Organization Id",
+    "GROUP_ID": "Group Id",
+    "FEDINFO": "FedInfo",
+    "EXTSOURCENAME": "ExtSource name",
+    "EXTSOURCETYPE": "ExtSource type",
+    "MODIFIED_AT": "Modified at",
+    "USER": "User",
+    "CREATED_BY": "Created by",
+    "VO_NAME": "Organization name"
   },
   "MEMBER_DETAIL": {
     "ENTITY": "Member",
@@ -851,7 +853,7 @@
       "MANAGERS": "Managers",
       "ASSIGNED_SERVICES": "Assigned services",
       "ASSIGNED_MEMBERS": "Assigned members",
-      "RESOURCE_TAGS":  "Assigned tags"
+      "RESOURCE_TAGS": "Assigned tags"
     },
     "GROUP": {
       "OVERVIEW": "Overview",
@@ -1178,6 +1180,7 @@
       "SHORT_NAME_DESCRIPTION": "Internal item identification (used as a fallback when you forgot to set \"Label\" for some language).",
       "CANCEL_BUTTON": "Cancel",
       "SUBMIT_BUTTON": "Submit",
+      "SUBMIT_BUTTON_DISABLED_TOOLTIP": "This item is required and hidden or disabled, but it has no prefilled value (Source and Federation attributes are empty)",
       "BASIC_SETTINGS": "Basic settings",
       "LANGUAGE_CS": "Language: cz",
       "LANGUAGE_EN": "Language: en",
@@ -1586,7 +1589,6 @@
       "OPTIONS": "Set options",
       "NEXT": "Next",
       "BACK": "Back"
-
     },
     "ADD_GROUP_TO_REGISTRATION": {
       "TITLE": "Assign group to registration",
@@ -1819,9 +1821,9 @@
       "TITLE": "Remove service from facility",
       "CHECKBOXES_DESCRIPTION": "You can also remove:",
       "CHECKBOXES_DISABLED": "Enabled only for all resources",
-      "CHECKBOX_TASK_AND_TASK_RESULTS" : "Task and task results",
-      "CHECKBOX_TASK_RESULTS" : "Task results",
-      "CHECKBOX_DESTINATION" : "Destination",
+      "CHECKBOX_TASK_AND_TASK_RESULTS": "Task and task results",
+      "CHECKBOX_TASK_RESULTS": "Task results",
+      "CHECKBOX_DESTINATION": "Destination",
       "DESCRIPTION": "Following resources will be affected.",
       "ASK": "Do you want to proceed?",
       "SUCCESS": "Service was successfully removed",
@@ -2457,7 +2459,7 @@
     "SPONSORSHIP_MEMBERS": "Members you are sponsor of",
     "RESOURCESELFSERVICE": "Resource self service",
     "RESOURCESELFSERVICE_RESOURCES": "Resources you are manager of",
-    "RESOURCEOBSERVER":  "Resource observer",
+    "RESOURCEOBSERVER": "Resource observer",
     "RESOURCEOBSERVER_RESOURCES": "Resources you are observer of"
   },
   "SHARED_LIB": {
@@ -2515,7 +2517,7 @@
           "FIND_VO": "Find organization...",
           "NO_VO_FOUND": "No matching organization found"
         },
-        "SERVICE_PACKAGE_SEARCH_SELECT":  {
+        "SERVICE_PACKAGE_SEARCH_SELECT": {
           "SELECT_PACKAGE": "Select service package",
           "FIND_PACKAGE": "Find service package...",
           "NO_PACKAGE_FOUND": "No matching service package found"
@@ -2607,7 +2609,9 @@
             "DIALOG_CLOSE": "Close",
             "DIALOG_BUG_REPORT": "Report a bug",
             "DEFAULT_RPC_ERROR_MESSAGE": "An operation failed.",
-            "PRIVILEGE_EXCEPTION": "You are not authorized to perform this action"
+            "PRIVILEGE_EXCEPTION": "You are not authorized to perform this action",
+            "ROUTE_DENIED_ERROR": "Access denied",
+            "ROUTE_DENIED_DESC": "You are not authorized to access this page"
           }
         },
         "USER_EXT_SOURCES_LIST": {
