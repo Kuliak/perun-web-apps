@@ -17,5 +17,6 @@ export interface GroupsPageQuery {
   offset: number;
   order: SortingOrder;
   sortColumn: GroupsOrderColumn;
+  memberId?: number;
   searchString?: string;
 }

@@ -10,7 +10,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 16
       - name: Cache node modules
         uses: actions/cache@v2
         with:
@@ -22,5 +22,7 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Run Prettier
+        run: npm run format:check
       - name: Run ESLint
         run: npm run lint

@@ -9,99 +9,73 @@
     [pageSizeOptions]="pageSizeOptions">
     <table [dataSource]="dataSource" mat-table class="w-100">
       <ng-container matColumnDef="id">
-        <th *matHeaderCellDef mat-header-cell>{{'VO_DETAIL.APPLICATION.TABLE_ID' | translate}}</th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.ID' | translate}}</th>
         <td *matCellDef="let application" class="static-column-size" mat-cell>
           {{application['id']}}
         </td>
       </ng-container>
       <ng-container matColumnDef="voId">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_VO_ID' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.VO_ID' | translate}}</th>
         <td *matCellDef="let application" class="static-column-size" mat-cell>
           {{application['vo'].id}}
         </td>
       </ng-container>
       <ng-container matColumnDef="voName">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_VO_NAME' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.VO_NAME' | translate}}</th>
         <td *matCellDef="let application" class="static-column-size" mat-cell>
           {{application['vo'].name}}
         </td>
       </ng-container>
       <ng-container matColumnDef="groupId">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_GROUP_ID' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.GROUP_ID' | translate}}</th>
         <td *matCellDef="let application" class="static-column-size" mat-cell>
           {{application.group ? application.group.id : '' }}
         </td>
       </ng-container>
       <ng-container matColumnDef="groupName">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_GROUP_NAME' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.GROUP_NAME' | translate}}</th>
         <td *matCellDef="let application" class="static-column-size" mat-cell>
           {{application.group ? application.group.name : '' }}
         </td>
       </ng-container>
       <ng-container matColumnDef="type">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_TYPE' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.TYPE' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.type}}</td>
       </ng-container>
       <ng-container matColumnDef="state">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_STATE' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.STATE' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.state}}</td>
       </ng-container>
       <ng-container matColumnDef="extSourceName">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_EXTSOURCENAME' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.EXTSOURCENAME' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.extSourceName}}</td>
       </ng-container>
       <ng-container matColumnDef="extSourceType">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_EXTSOURCETYPE' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.EXTSOURCETYPE' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.extSourceType}}</td>
       </ng-container>
       <ng-container matColumnDef="user">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_USER' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.USER' | translate}}</th>
         <td *matCellDef="let application" mat-cell>
           {{application.user ? (application.user | userFullName) : 'null'}}
         </td>
       </ng-container>
       <ng-container matColumnDef="createdBy">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_CREATED_BY' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.CREATED_BY' | translate}}</th>
         <td *matCellDef="let application" mat-cell>
           {{application.createdBy.slice(application.createdBy.lastIndexOf('=')+1, application.createdBy.length)}}
         </td>
       </ng-container>
       <ng-container matColumnDef="createdAt">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_CREATED_DATE' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.CREATED_DATE' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.createdAt | date: 'd.M.y'}}</td>
       </ng-container>
       <ng-container matColumnDef="modifiedBy">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_MODIFIED_BY' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.MODIFIED_BY' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{getFriendlyName(application.modifiedBy)}}</td>
       </ng-container>
       <ng-container matColumnDef="modifiedAt">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_MODIFIED_AT' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.MODIFIED_AT' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.modifiedAt | date: 'd.M.y'}}</td>
       </ng-container>
 
@@ -113,9 +87,7 @@
       </ng-container>
 
       <ng-container matColumnDef="fedInfo">
-        <th *matHeaderCellDef mat-header-cell>
-          {{'VO_DETAIL.APPLICATION.TABLE_FEDINFO' | translate}}
-        </th>
+        <th *matHeaderCellDef mat-header-cell>{{'APPLICATIONS_LIST.FEDINFO' | translate}}</th>
         <td *matCellDef="let application" mat-cell>{{application.fedInfo}}</td>
       </ng-container>
 
