@@ -42,7 +42,7 @@ import { InputUpdateApplicationMail } from '../model/inputUpdateApplicationMail'
 import { InputUpdateForm } from '../model/inputUpdateForm';
 import { InputUpdateFormItemsForGroup } from '../model/inputUpdateFormItemsForGroup';
 import { InputUpdateFormItemsForVo } from '../model/inputUpdateFormItemsForVo';
-import { PaginatedApplications } from '../model/paginatedApplications';
+import { PaginatedRichApplications } from '../model/paginatedRichApplications';
 import { PerunException } from '../model/perunException';
 import { UserExtSource } from '../model/userExtSource';
 
@@ -2327,17 +2327,17 @@ export class RegistrarManagerService {
     inputGetPaginatedApplications: InputGetPaginatedApplications,
     observe?: 'body',
     reportProgress?: boolean
-  ): Observable<PaginatedApplications>;
+  ): Observable<PaginatedRichApplications>;
   public getApplicationsPage(
     inputGetPaginatedApplications: InputGetPaginatedApplications,
     observe?: 'response',
     reportProgress?: boolean
-  ): Observable<HttpResponse<PaginatedApplications>>;
+  ): Observable<HttpResponse<PaginatedRichApplications>>;
   public getApplicationsPage(
     inputGetPaginatedApplications: InputGetPaginatedApplications,
     observe?: 'events',
     reportProgress?: boolean
-  ): Observable<HttpEvent<PaginatedApplications>>;
+  ): Observable<HttpEvent<PaginatedRichApplications>>;
   public getApplicationsPage(
     inputGetPaginatedApplications: InputGetPaginatedApplications,
     observe: any = 'body',
@@ -2387,7 +2387,7 @@ export class RegistrarManagerService {
       headers = headers.set('Content-Type', httpContentTypeSelected);
     }
 
-    return this.httpClient.post<PaginatedApplications>(
+    return this.httpClient.post<PaginatedRichApplications>(
       `${this.configuration.basePath}/json/registrarManager/getApplicationsPage`,
       inputGetPaginatedApplications,
       {

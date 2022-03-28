@@ -25,9 +25,11 @@ import { Observable } from 'rxjs';
 
 import { Attribute } from '../model/attribute';
 import { AttributeDefinition } from '../model/attributeDefinition';
+import { AttributePolicyCollection } from '../model/attributePolicyCollection';
 import { AttributeRights } from '../model/attributeRights';
 import { InlineResponse200 } from '../model/inlineResponse200';
 import { InputAttributeDefinition } from '../model/inputAttributeDefinition';
+import { InputAttributePolicyCollections } from '../model/inputAttributePolicyCollections';
 import { InputAttributeRights } from '../model/inputAttributeRights';
 import { InputCreateAttributeDefinition } from '../model/inputCreateAttributeDefinition';
 import { InputEntitylessAttribute } from '../model/inputEntitylessAttribute';
@@ -1112,6 +1114,85 @@ export class AttributesManagerService {
 
     return this.httpClient.get<InlineResponse200>(
       `${this.configuration.basePath}/json/attributesManager/getAttributeModulesDependenciesGraphText`,
+      {
+        params: queryParameters,
+        withCredentials: this.configuration.withCredentials,
+        headers: headers,
+        observe: observe,
+        reportProgress: reportProgress,
+      }
+    );
+  }
+
+  /**
+   * Gets attribute policy collections for an attribute definition with given id.
+   * @param attributeId id of AttributeDefinition
+   * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+   * @param reportProgress flag to report request and response progress.
+   */
+  public getAttributePolicyCollections(
+    attributeId: number,
+    observe?: 'body',
+    reportProgress?: boolean
+  ): Observable<Array<AttributePolicyCollection>>;
+  public getAttributePolicyCollections(
+    attributeId: number,
+    observe?: 'response',
+    reportProgress?: boolean
+  ): Observable<HttpResponse<Array<AttributePolicyCollection>>>;
+  public getAttributePolicyCollections(
+    attributeId: number,
+    observe?: 'events',
+    reportProgress?: boolean
+  ): Observable<HttpEvent<Array<AttributePolicyCollection>>>;
+  public getAttributePolicyCollections(
+    attributeId: number,
+    observe: any = 'body',
+    reportProgress: boolean = false
+  ): Observable<any> {
+    if (attributeId === null || attributeId === undefined) {
+      throw new Error(
+        'Required parameter attributeId was null or undefined when calling getAttributePolicyCollections.'
+      );
+    }
+
+    let queryParameters = new HttpParams({ encoder: this.encoder });
+    if (attributeId !== undefined && attributeId !== null) {
+      queryParameters = queryParameters.set('attributeId', <any>attributeId);
+    }
+
+    let headers = this.defaultHeaders;
+
+    // authentication (ApiKeyAuth) required
+    if (this.configuration.apiKeys && this.configuration.apiKeys['Authorization']) {
+      headers = headers.set('Authorization', this.configuration.apiKeys['Authorization']);
+    }
+
+    // authentication (BasicAuth) required
+    if (this.configuration.username || this.configuration.password) {
+      headers = headers.set(
+        'Authorization',
+        'Basic ' + btoa(this.configuration.username + ':' + this.configuration.password)
+      );
+    }
+    // authentication (BearerAuth) required
+    if (this.configuration.accessToken) {
+      const accessToken =
+        typeof this.configuration.accessToken === 'function'
+          ? this.configuration.accessToken()
+          : this.configuration.accessToken;
+      headers = headers.set('Authorization', 'Bearer ' + accessToken);
+    }
+    // to determine the Accept header
+    const httpHeaderAccepts: string[] = ['application/json'];
+    const httpHeaderAcceptSelected: string | undefined =
+      this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected !== undefined) {
+      headers = headers.set('Accept', httpHeaderAcceptSelected);
+    }
+
+    return this.httpClient.get<Array<AttributePolicyCollection>>(
+      `${this.configuration.basePath}/json/attributesManager/getAttributePolicyCollections`,
       {
         params: queryParameters,
         withCredentials: this.configuration.withCredentials,
@@ -12003,6 +12084,88 @@ export class AttributesManagerService {
       null,
       {
         params: queryParameters,
+        withCredentials: this.configuration.withCredentials,
+        headers: headers,
+        observe: observe,
+        reportProgress: reportProgress,
+      }
+    );
+  }
+
+  /**
+   * Deletes old attribute policy collections and sets attribute policy collections for an attribute definition provided in given policy collections.
+   * @param inputAttributePolicyCollections
+   * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+   * @param reportProgress flag to report request and response progress.
+   */
+  public setAttributePolicyCollections(
+    inputAttributePolicyCollections: InputAttributePolicyCollections,
+    observe?: 'body',
+    reportProgress?: boolean
+  ): Observable<any>;
+  public setAttributePolicyCollections(
+    inputAttributePolicyCollections: InputAttributePolicyCollections,
+    observe?: 'response',
+    reportProgress?: boolean
+  ): Observable<HttpResponse<any>>;
+  public setAttributePolicyCollections(
+    inputAttributePolicyCollections: InputAttributePolicyCollections,
+    observe?: 'events',
+    reportProgress?: boolean
+  ): Observable<HttpEvent<any>>;
+  public setAttributePolicyCollections(
+    inputAttributePolicyCollections: InputAttributePolicyCollections,
+    observe: any = 'body',
+    reportProgress: boolean = false
+  ): Observable<any> {
+    if (inputAttributePolicyCollections === null || inputAttributePolicyCollections === undefined) {
+      throw new Error(
+        'Required parameter inputAttributePolicyCollections was null or undefined when calling setAttributePolicyCollections.'
+      );
+    }
+
+    let headers = this.defaultHeaders;
+
+    // authentication (ApiKeyAuth) required
+    if (this.configuration.apiKeys && this.configuration.apiKeys['Authorization']) {
+      headers = headers.set('Authorization', this.configuration.apiKeys['Authorization']);
+    }
+
+    // authentication (BasicAuth) required
+    if (this.configuration.username || this.configuration.password) {
+      headers = headers.set(
+        'Authorization',
+        'Basic ' + btoa(this.configuration.username + ':' + this.configuration.password)
+      );
+    }
+    // authentication (BearerAuth) required
+    if (this.configuration.accessToken) {
+      const accessToken =
+        typeof this.configuration.accessToken === 'function'
+          ? this.configuration.accessToken()
+          : this.configuration.accessToken;
+      headers = headers.set('Authorization', 'Bearer ' + accessToken);
+    }
+    // to determine the Accept header
+    const httpHeaderAccepts: string[] = ['application/json'];
+    const httpHeaderAcceptSelected: string | undefined =
+      this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected !== undefined) {
+      headers = headers.set('Accept', httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    const consumes: string[] = ['application/json'];
+    const httpContentTypeSelected: string | undefined =
+      this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected !== undefined) {
+      headers = headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    return this.httpClient.post<any>(
+      `${this.configuration.basePath}/json/attributesManager/setAttributePolicyCollections`,
+      inputAttributePolicyCollections,
+      {
         withCredentials: this.configuration.withCredentials,
         headers: headers,
         observe: observe,

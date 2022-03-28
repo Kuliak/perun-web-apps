@@ -296,8 +296,8 @@ export class AuthzResolverService {
   }
 
   /**
-   * Gets all rich admins
-   * Returns all managers for complementaryObject and role with specified attributes.
+   * Gets all valid rich admins
+   * Get all valid richUser administrators (for group-based rights, status must be VALID for both Vo and group) for complementary object and role with specified attributes.
    * @param role
    * @param complementaryObjectId Property id of complementaryObject to get managers for
    * @param complementaryObjectName Property beanName of complementaryObject, meaning object type (Vo | Group | Facility | ... )

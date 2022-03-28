@@ -1200,7 +1200,7 @@ export class VosManagerService {
   }
 
   /**
-   * Get list of all richUser administrators for the vo and supported role with specific attributes. Supported roles: VOOBSERVER, TOPGROUPCREATOR, VOADMIN If \&quot;onlyDirectAdmins\&quot; is &#x3D;&#x3D; true, return only direct admins of the vo for supported role with specific attributes. If \&quot;allUserAttributes\&quot; is &#x3D;&#x3D; true, do not specify attributes through list and return them all in objects richUser. Ignoring list of specific attributes.
+   * Get list of all richUser administrators for the vo and supported role with specific attributes. If some group is administrator of the given group, all VALID members are included in the list. Supported roles: VOOBSERVER, TOPGROUPCREATOR, VOADMIN If \&quot;onlyDirectAdmins\&quot; is &#x3D;&#x3D; true, return only direct admins of the vo for supported role with specific attributes. If \&quot;allUserAttributes\&quot; is &#x3D;&#x3D; true, do not specify attributes through list and return them all in objects richUser. Ignoring list of specific attributes.
    * @param vo id of Vo
    * @param role role name
    * @param specificAttributes list of specified attributes which are needed in object richUser
@@ -1423,7 +1423,7 @@ export class VosManagerService {
   }
 
   /**
-   * Get list of all vo administrators for supported role and specific vo. If onlyDirectAdmins is true, return only direct admins of the vo for supported role. Supported roles: VOOBSERVER, TOPGROUPCREATOR, VOADMIN
+   * Get list of all vo administrators for supported role and specific vo. If onlyDirectAdmins is true, return only direct admins of the vo for supported role. Otherwise return direct admins and users who are VALID members of administrator groups Supported roles: VOOBSERVER, TOPGROUPCREATOR, VOADMIN
    * @param vo id of Vo
    * @param role supported role name
    * @param onlyDirectAdmins get only direct administrators (if false, get both direct and indirect)
@@ -1835,25 +1835,31 @@ export class VosManagerService {
    * @param reportProgress flag to report request and response progress.
    */
   public getVoByShortName(
-    shortName?: string,
+    shortName: string,
     observe?: 'body',
     reportProgress?: boolean
   ): Observable<Vo>;
   public getVoByShortName(
-    shortName?: string,
+    shortName: string,
     observe?: 'response',
     reportProgress?: boolean
   ): Observable<HttpResponse<Vo>>;
   public getVoByShortName(
-    shortName?: string,
+    shortName: string,
     observe?: 'events',
     reportProgress?: boolean
   ): Observable<HttpEvent<Vo>>;
   public getVoByShortName(
-    shortName?: string,
+    shortName: string,
     observe: any = 'body',
     reportProgress: boolean = false
   ): Observable<any> {
+    if (shortName === null || shortName === undefined) {
+      throw new Error(
+        'Required parameter shortName was null or undefined when calling getVoByShortName.'
+      );
+    }
+
     let queryParameters = new HttpParams({ encoder: this.encoder });
     if (shortName !== undefined && shortName !== null) {
       queryParameters = queryParameters.set('shortName', <any>shortName);

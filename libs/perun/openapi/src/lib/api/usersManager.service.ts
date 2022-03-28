@@ -2096,7 +2096,7 @@ export class UsersManagerService {
   }
 
   /**
-   * Returns list of Groups in selected Vo, where the User is a direct Administrator or he is a member of any group which is Administrator of some of these Groups.
+   * Returns list of Groups in selected Vo, where the User is a direct Administrator or he is a VALID member of any group which is Administrator of some of these Groups.
    * @param user id of User
    * @param vo id of Vo
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -2188,7 +2188,7 @@ export class UsersManagerService {
   }
 
   /**
-   * Returns list of Groups in Perun, where the User is a direct Administrator or he is a member of any group which is Administrator of some of these Groups.
+   * Returns list of Groups in Perun, where the User is a direct Administrator or he is a VALID member of any group which is Administrator of some of these Groups.
    * @param user id of User
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
    * @param reportProgress flag to report request and response progress.
@@ -3909,7 +3909,7 @@ export class UsersManagerService {
   }
 
   /**
-   * Returns list of VOs, where the user is an Administrator.
+   * Returns list of VOs, where the user is an Administrator. If a group, of which the user is a valid member, is an administrator of a VO, include that VO as well.
    * @param user id of User
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
    * @param reportProgress flag to report request and response progress.

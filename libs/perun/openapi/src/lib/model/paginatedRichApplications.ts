@@ -9,13 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Auditable } from './auditable';
+import { RichApplication } from './richApplication';
 
-export interface Group extends Auditable {
-  name?: string;
-  shortName?: string;
-  description?: string | null;
-  voId?: number;
-  parentGroupId?: number | null;
-  uuid?: string;
+export interface PaginatedRichApplications {
+  offset: number;
+  pageSize: number;
+  totalCount: number;
+  data: Array<RichApplication>;
 }

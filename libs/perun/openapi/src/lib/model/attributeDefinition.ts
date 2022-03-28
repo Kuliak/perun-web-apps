@@ -14,7 +14,7 @@ import { Auditable } from './auditable';
 export interface AttributeDefinition extends Auditable {
   friendlyName?: string;
   namespace?: string;
-  description?: string;
+  description?: string | null;
   type?: string;
   displayName?: string;
   writable?: boolean;

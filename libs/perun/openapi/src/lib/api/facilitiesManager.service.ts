@@ -5319,7 +5319,7 @@ export class FacilitiesManagerService {
   }
 
   /**
-   * Returns list of Facilities, where the user is an Administrator.
+   * Returns list of Facilities, where the user is a direct Administrator or a VALID member of an administrator group.
    * @param user id of User
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
    * @param reportProgress flag to report request and response progress.
@@ -5477,7 +5477,7 @@ export class FacilitiesManagerService {
   }
 
   /**
-   * Get list of all facility administrators for supported role and given facility. If onlyDirectAdmins is true, return only direct admins of the group for supported role. Supported roles: FacilityAdmin
+   * Get list of all facility administrators for supported role and given facility. If onlyDirectAdmins is true, return only direct admins of the group for supported role. Includes users who are VALID members of administrator groups. Supported roles: FacilityAdmin
    * @param facility id of Facility
    * @param onlyDirectAdmins if true, get only direct facility administrators (if false, get both direct and indirect)
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -5569,7 +5569,7 @@ export class FacilitiesManagerService {
   }
 
   /**
-   * Get list of all facility administrators for supported role and given facility. If onlyDirectAdmins is true, return only direct admins of the group for supported role. Supported roles: FacilityAdmin
+   * Get list of all facility administrators for supported role and given facility. If onlyDirectAdmins is true, return only direct admins of the group for supported role. Includes users who are VALID members of administrator groups. Supported roles: FacilityAdmin
    * @param facility name of Facility
    * @param onlyDirectAdmins if true, get only direct facility administrators (if false, get both direct and indirect)
    * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

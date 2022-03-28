@@ -20,6 +20,7 @@ export interface ApplicationsPageQuery {
   sortColumn: ApplicationsOrderColumn;
   searchString?: string;
   includeGroupApplications?: boolean;
+  getDetails?: boolean;
   states?: Array<AppState>;
   dateFrom?: string;
   dateTo?: string;
