@@ -894,7 +894,8 @@
       "ORGANIZATIONS": "Organizations",
       "SERVICES": "Services",
       "OWNERS": "Owners",
-      "AUDIT_LOG": "Audit log"
+      "AUDIT_LOG": "Audit log",
+      "CONSENT_HUBS": "Consent hubs"
     },
     "VISUALIZER": {
       "ATTR_DEPENDENCIES": "Modules dependencies",
@@ -1718,7 +1719,8 @@
       "ADD": "Add",
       "CANCEL": "Cancel",
       "SUCCESS": "Required attributes were added.",
-      "FILTER": "Filter"
+      "FILTER": "Filter",
+      "ACTIVE_WARN": "Service is active. Some attributes can only be added to disabled services. Preferably disable service before adding required attributes."
     },
     "REMOVE_REQUIRED_ATTRIBUTES": {
       "TITLE": "Remove required attributes",
@@ -2087,6 +2089,17 @@
       "DELETE": "Delete with all relations",
       "KEEP": "Keep facility",
       "SUCCESS": "Facility was successfully deleted"
+    },
+    "EDIT_ENFORCE_CONSENTS_FLAG": {
+      "DISABLE_TITLE": "Stop enforcing consents",
+      "ENFORCE_TITLE": "Enforce consents",
+      "DISABLE_DESCRIPTION": "You are about to stop enforcing user consent to data processing for the following consent hub:",
+      "ENFORCE_DESCRIPTION": "You are about to enforce user consent to data processing for the following consent hub:",
+      "DISABLE_BOLD_DESCRIPTION": "Note that users will not have to grant consent to data processing so they will be propagated to destination services without any consent.",
+      "ENFORCE_BOLD_DESCRIPTION": "Note that users will start to receive email notifications to grant consent to data processing. Those who do not do so will not be propagated to destination services.",
+      "CANCEL_BUTTON": "Cancel",
+      "DISABLE_BUTTON": "Stop enforcing",
+      "ENFORCE_BUTTON": "Enforce"
     }
   },
   "MEMBERS_LIST": {
@@ -2148,7 +2161,8 @@
       "IMPORT": "Import",
       "DELETE": "Delete",
       "SEARCH": "Filter by Id, name, entity, definition, or type",
-      "NO_ATTRIBUTES": "There are no attributes available."
+      "NO_ATTRIBUTES": "There are no attributes available.",
+      "CONSENT_RELATED_DISABLED": "Attribute requires user's permission. It can only be added, when service is disabled."
     },
     "USERS": {
       "TITLE": "Users",
@@ -2215,6 +2229,10 @@
     },
     "AUDIT_LOG": {
       "TITLE": "Audit log"
+    },
+    "CONSENT_HUBS": {
+      "TITLE": "Consent hubs",
+      "SEARCH": "Search by Id, Name or Facilities"
     }
   },
   "USER_DETAIL": {
@@ -2390,6 +2408,8 @@
       "SPONSORED_MEMBERS_LIST": {
         "ID": "Id",
         "NAME": "Name",
+        "EMAIL": "Email",
+        "LOGIN": "Login",
         "SPONSORS": "Sponsors",
         "NO_SPONSORED_MEMBERS_WARNING": "No sponsored members found",
         "PASSWORD_RESET": "Reset password"
@@ -2414,6 +2434,15 @@
         "DESTINATIONS": "Destinations",
         "HOSTS": "Hosts",
         "NO_FACILITIES_WARNING": "No facilities found"
+      },
+      "CONSENT_HUBS_LIST": {
+        "ID": "Id",
+        "NAME": "Name",
+        "ENFORCE_CONSENTS": "Enforce consents",
+        "FACILITIES": "Facilities",
+        "NO_CONSENT_HUBS": "No consent hubs found",
+        "NO_FILTER_RESULTS": "No consent hubs are matching your query",
+        "CHANGE_ENFORCE_CONSENTS_SUCCESS": "Enforce consents flag was successfully updated"
       }
     },
     "IDENTITY_DETAIL": {

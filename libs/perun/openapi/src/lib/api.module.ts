@@ -6,6 +6,7 @@ import { AttributesManagerService } from './api/attributesManager.service';
 import { AuditMessagesManagerService } from './api/auditMessagesManager.service';
 import { AuthzResolverService } from './api/authzResolver.service';
 import { CabinetManagerService } from './api/cabinetManager.service';
+import { ConsentsManagerService } from './api/consentsManager.service';
 import { DatabaseManagerService } from './api/databaseManager.service';
 import { ExtSourcesManagerService } from './api/extSourcesManager.service';
 import { FacilitiesManagerService } from './api/facilitiesManager.service';
@@ -17,6 +18,7 @@ import { OwnersManagerService } from './api/ownersManager.service';
 import { RTMessagesManagerService } from './api/rTMessagesManager.service';
 import { RegistrarManagerService } from './api/registrarManager.service';
 import { ResourcesManagerService } from './api/resourcesManager.service';
+import { SearcherService } from './api/searcher.service';
 import { ServicesManagerService } from './api/servicesManager.service';
 import { TasksManagerService } from './api/tasksManager.service';
 import { UsersManagerService } from './api/usersManager.service';
@@ -32,6 +34,7 @@ import { VosManagerService } from './api/vosManager.service';
     AuditMessagesManagerService,
     AuthzResolverService,
     CabinetManagerService,
+    ConsentsManagerService,
     DatabaseManagerService,
     ExtSourcesManagerService,
     FacilitiesManagerService,
@@ -43,6 +46,7 @@ import { VosManagerService } from './api/vosManager.service';
     RTMessagesManagerService,
     RegistrarManagerService,
     ResourcesManagerService,
+    SearcherService,
     ServicesManagerService,
     TasksManagerService,
     UsersManagerService,
