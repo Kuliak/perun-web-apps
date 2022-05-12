@@ -271,6 +271,8 @@
   "VO_DETAIL": {
     "ENTITY": "Organization",
     "SHORT_NAME": "Short name",
+    "MEMBER_VOS": "Member organizations",
+    "PARENT_VOS": "Member of organizations",
     "BACK": "Back",
     "RESOURCES": {
       "LIST": {
@@ -516,6 +518,30 @@
         "FILTER": "Filter by name or Id",
         "CREATE": "Create",
         "DELETE": "Remove"
+      },
+      "MEMBER_ORGANIZATIONS": {
+        "TITLE": "Member organizations",
+        "ADD": "Add",
+        "REMOVE": "Remove",
+        "FILTER": "Filter by name",
+        "ADD_MEMBER_ORGANIZATION": {
+          "TITLE": "Add member organization",
+          "CANCEL": "Cancel",
+          "BACK": "Back",
+          "NEXT": "Next",
+          "ADD": "Add",
+          "SELECTION_STEP": "Select organization",
+          "FILTER_VOS": "Filter by name",
+          "CONFIRMATION_STEP": "Confirmation",
+          "CONFIRM": "Do you really want to add this organization as member?",
+          "WARNING": "Every member of this organization will become member of your organization",
+          "SUCCESS": "Member organization successfully added"
+        },
+        "REMOVE_MEMBER_ORGANIZATION": {
+          "TITLE": "Remove member organization",
+          "WARNING": "By removing this organization it's new members won't be imported to your organization.",
+          "SUCCESS": "Member organization successfully removed"
+        }
       }
     },
     "APPLICATION": {
@@ -570,6 +596,10 @@
     "STATISTICS": {
       "TITLE": "Statistics",
       "MEMBERS_COUNT": "Members by status"
+    },
+    "RELATED_VOS": {
+      "MEMBER_VOS": "Member organizations",
+      "PARENT_VOS": "Member of organizations"
     }
   },
   "GROUP_DETAIL": {
@@ -787,9 +817,15 @@
   "SERVICE_DETAIL": {
     "ENTITY": "Service",
     "STATUS": "Status",
+    "EVALUATE_CONSENTS": "Evaluate consents",
+    "CONFIRM_DIALOG_TITLE": "Evaluate consents confirmation",
+    "CONFIRM_DIALOG_DESCRIPTION": "Are you sure you want to evaluate consents for this service?",
+    "EVALUATION_FINISH": "Consents evaluation completed",
     "STATUS_CHANGE_SUCCESS": "Service status was successfully changed",
     "ENABLED": "Enabled",
     "DISABLED": "Disabled",
+    "USE_EXPIRED_MEMBERS_ENABLED": "This service is using expired members as well",
+    "USE_EXPIRED_MEMBERS_DISABLED": "This service is not using expired members",
     "DESCRIPTION": "Description",
     "REQUIRED_ATTRIBUTES": {
       "TITLE": "Required attributes",
@@ -827,7 +863,8 @@
       "SPONSORS": "Sponsors",
       "SPONSORED_MEMBERS": "Sponsored members",
       "SERVICE_MEMBERS": "Service accounts",
-      "STATISTICS": "Statistics"
+      "STATISTICS": "Statistics",
+      "MEMBER_ORGANIZATIONS": "Member organizations"
     },
     "FACILITY": {
       "OVERVIEW": "Overview",
@@ -895,7 +932,8 @@
       "SERVICES": "Services",
       "OWNERS": "Owners",
       "AUDIT_LOG": "Audit log",
-      "CONSENT_HUBS": "Consent hubs"
+      "CONSENT_HUBS": "Consent hubs",
+      "SEARCHER": "Searcher"
     },
     "VISUALIZER": {
       "ATTR_DEPENDENCIES": "Modules dependencies",
@@ -2104,6 +2142,8 @@
   },
   "MEMBERS_LIST": {
     "ID": "Id",
+    "VO_ID": "Organization Id",
+    "USER_ID": "User Id",
     "NAME": "Name",
     "STATUS": "Organization status",
     "GROUP_STATUS": "Group status",
@@ -2232,7 +2272,18 @@
     },
     "CONSENT_HUBS": {
       "TITLE": "Consent hubs",
+      "EVALUATE_CONSENTS": "Evaluate consents",
+      "CONFIRM_DIALOG_TITLE": "Evaluate consents confirmation",
+      "CONFIRM_DIALOG_DESCRIPTION": "Are you sure you want to evaluate consents for all selected consent hubs?",
+      "EVALUATION_FINISH": "Consents evaluation completed",
       "SEARCH": "Search by Id, Name or Facilities"
+    },
+    "SEARCHER": {
+      "TITLE": "Searcher",
+      "TAB_USERS": "User",
+      "TAB_MEMBERS": "Members",
+      "TAB_FACILITIES": "Facilities",
+      "TAB_RESOURCES": "Resources"
     }
   },
   "USER_DETAIL": {
@@ -2562,7 +2613,9 @@
           "TABLE_RESOURCE_ID": "Id",
           "TABLE_RESOURCE_NAME": "Name",
           "TABLE_VO_NAME": "Organization",
+          "TABLE_VO_ID": "Organization Id",
           "TABLE_FACILITY_NAME": "Facility name",
+          "TABLE_FACILITY_ID": "Facility Id",
           "TABLE_RESOURCE_TAGS": "Tags",
           "TABLE_SEARCH": "Filter",
           "TABLE_RESOURCE_DESCRIPTION": "Description",
@@ -2596,6 +2649,16 @@
           "SELECT_USER": "Select user",
           "FIND_USER": "Find user...",
           "NO_USER_FOUND": "No matching user found"
+        },
+        "ATTR_DEF_SEARCH_SELECT": {
+          "SELECT_ATTR_DEF": "Select attribute definition",
+          "FIND_ATTR_DEF": "Find attribute definition...",
+          "NO_ATTR_DEF_FOUND": "No matching attribute definition found",
+          "SEARCH_PLACEHOLDER": "Search by selected attribute",
+          "ADD_PARAMETER": "Add parameter",
+          "REMOVE_PARAMETER": "Remove",
+          "SEARCH_BUTTON": "Search",
+          "SEARCH_BUTTON_TOOLTIP": "Search string cannot be empty"
         },
         "ATTRIBUTE_VALUE_LIST": {
           "EDIT_DIALOG": {
