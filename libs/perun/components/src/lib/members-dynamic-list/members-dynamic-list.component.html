@@ -34,6 +34,8 @@
             [aria-label]="checkboxLabel(member)"
             [checked]="selection.isSelected(member)"
             attr.data-cy="{{member.user.firstName | lowercase}}-checkbox"
+            [disabled]="member.membershipType === 'INDIRECT'"
+            [matTooltip]="member.membershipType === 'INDIRECT' ? ('MEMBERS_LIST.CHECKBOX_TOOLTIP' | translate):''"
             color="primary">
           </mat-checkbox>
         </td>
@@ -115,8 +117,8 @@
   </perun-web-apps-table-wrapper>
 </div>
 
-<app-alert
+<perun-web-apps-alert
   *ngIf="this.dataSource.allObjectCount === 0 && (dataSource.loading$ | async) === false"
   alert_type="warn">
   {{'SHARED_LIB.UI.ALERTS.NO_MEMBERS' | translate}}
-</app-alert>
+</perun-web-apps-alert>

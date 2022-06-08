@@ -9,25 +9,19 @@ export interface CreateServiceDialogData {
   theme: string;
   service: Service;
 }
+
 @Component({
   selector: 'app-create-service-dialog',
   templateUrl: './create-edit-service-dialog.component.html',
   styleUrls: ['./create-edit-service-dialog.component.scss'],
 })
 export class CreateEditServiceDialogComponent implements OnInit {
-  constructor(
-    private dialogRef: MatDialogRef<CreateEditServiceDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: CreateServiceDialogData,
-    private serviceManager: ServicesManagerService,
-    private notificator: NotificatorService,
-    private translate: TranslateService
-  ) {}
-
   theme: string;
   loading = false;
 
   description: string;
   status = true;
+  propagateExpiredMembers = true;
 
   nameControl = new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]+$')]);
   delayControl = new FormControl(10, [Validators.pattern('^[0-9]*$')]);
@@ -37,6 +31,14 @@ export class CreateEditServiceDialogComponent implements OnInit {
   asEdit = false;
   title: string;
   buttonText: string;
+
+  constructor(
+    private dialogRef: MatDialogRef<CreateEditServiceDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: CreateServiceDialogData,
+    private serviceManager: ServicesManagerService,
+    private notificator: NotificatorService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.theme = this.data.theme;
@@ -49,71 +51,78 @@ export class CreateEditServiceDialogComponent implements OnInit {
       this.recurrenceControl.setValue(this.data.service.recurrence);
       this.pathControl.setValue(this.data.service.script);
       this.status = this.data.service.enabled;
+      this.propagateExpiredMembers = this.data.service.useExpiredMembers;
 
-      this.title = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT_TITLE');
-      this.buttonText = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT');
+      this.title = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT_TITLE') as string;
+      this.buttonText = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT') as string;
     } else {
-      this.title = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE_TITLE');
-      this.buttonText = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE');
+      this.title = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE_TITLE') as string;
+      this.buttonText = this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE') as string;
     }
   }
 
-  onCreate() {
+  onCreate(): void {
     this.loading = true;
     this.serviceManager
       .createServiceWithService({
         service: {
-          name: this.nameControl.value,
+          name: this.nameControl.value as string,
           description: this.description,
-          delay: this.delayControl.value,
-          recurrence: this.recurrenceControl.value,
+          delay: this.delayControl.value as number,
+          recurrence: this.recurrenceControl.value as number,
           enabled: this.status,
-          script: this.pathControl.value,
-          useExpiredMembers: false,
+          script: this.pathControl.value as string,
+          useExpiredMembers: this.propagateExpiredMembers,
           id: 0,
           beanName: '',
         },
       })
-      .subscribe(() => {
-        this.notificator.showSuccess(
-          this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE_SUCCESS')
-        );
-        this.dialogRef.close(true);
-        this.loading = false;
-      });
+      .subscribe(
+        () => {
+          this.notificator.showSuccess(
+            this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.CREATE_SUCCESS') as string
+          );
+          this.dialogRef.close(true);
+          this.loading = false;
+        },
+        () => (this.loading = false)
+      );
   }
 
-  onEdit() {
+  onEdit(): void {
     this.loading = true;
     this.serviceManager
       .updateService({
         service: {
-          name: this.nameControl.value,
+          name: this.nameControl.value as string,
           description: this.description,
-          delay: this.delayControl.value,
-          recurrence: this.recurrenceControl.value,
+          delay: this.delayControl.value as number,
+          recurrence: this.recurrenceControl.value as number,
           enabled: this.status,
-          script: this.pathControl.value,
-          useExpiredMembers: this.data.service.useExpiredMembers,
+          script: this.pathControl.value as string,
+          useExpiredMembers: this.propagateExpiredMembers,
           id: this.data.service.id,
           beanName: this.data.service.beanName,
         },
       })
-      .subscribe(() => {
-        this.notificator.showSuccess(
-          this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT_SUCCESS')
-        );
-        this.dialogRef.close(true);
-        this.loading = false;
-      });
+      .subscribe(
+        () => {
+          this.notificator.showSuccess(
+            this.translate.instant('DIALOGS.CREATE_EDIT_SERVICE.EDIT_SUCCESS') as string
+          );
+          this.dialogRef.close(true);
+          this.loading = false;
+        },
+        () => (this.loading = false)
+      );
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close(false);
   }
 
-  makePath() {
-    const path = './'.concat(this.nameControl.value);
+  makePath(): void {
+    const path = './'.concat(this.nameControl.value as string);
     this.pathControl.setValue(path);
   }
 }

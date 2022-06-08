@@ -20,16 +20,16 @@ export class AttributeValueListEditDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: AttributeValueListEditDialogData
   ) {}
 
-  ngOnInit() {
-    this.attributeValue = this.data.attribute.value[this.data.index];
+  ngOnInit(): void {
+    this.attributeValue = (this.data.attribute.value as string[])[this.data.index];
   }
 
-  cancel() {
+  cancel(): void {
     this.dialogRef.close();
   }
 
-  submit() {
-    this.data.attribute.value[this.data.index] = this.attributeValue;
+  submit(): void {
+    (this.data.attribute.value as string[])[this.data.index] = this.attributeValue;
     this.dialogRef.close(true);
   }
 }

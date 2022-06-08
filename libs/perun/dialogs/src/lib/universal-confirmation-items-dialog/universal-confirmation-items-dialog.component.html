@@ -19,9 +19,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class="font-weight-bolder"></tr>
       <tr mat-row *matRowDef="let item; columns: displayedColumns;"></tr>
     </table>
-    <app-alert *ngIf="data.alert" [alert_type]="'warn'">
+    <perun-web-apps-alert *ngIf="data.alert" [alert_type]="'warn'">
       {{data.alert | translate}}
-    </app-alert>
+    </perun-web-apps-alert>
   </div>
   <div mat-dialog-actions>
     <button mat-flat-button class="ml-auto" (click)="onCancel()">
@@ -34,7 +34,7 @@
       [disabled]="loading"
       (click)="onSubmit()"
       *ngIf="data.type === 'remove'">
-      {{'SHARED_LIB.PERUN.COMPONENTS.UNIVERSAL_REMOVE_ITEMS_DIALOG.SUBMIT_BUTTON' | translate}}
+      {{'SHARED_LIB.PERUN.COMPONENTS.UNIVERSAL_REMOVE_ITEMS_DIALOG.REMOVE_BUTTON' | translate}}
     </button>
     <button
       mat-flat-button

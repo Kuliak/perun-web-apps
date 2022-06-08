@@ -14,6 +14,10 @@ import {
   ApplicationFormItem,
   RichGroup,
   Author,
+  Facility,
+  Vo,
+  Resource,
+  AttributeDefinition,
 } from '@perun-web-apps/perun/openapi';
 import { Attribute } from '@perun-web-apps/perun/openapi';
 import { MatDialogConfig } from '@angular/material/dialog';
@@ -21,6 +25,7 @@ import { formatDate } from '@angular/common';
 import { MatSort } from '@angular/material/sort';
 import { saveAs } from 'file-saver';
 import { AbstractControl, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
+import { Urns } from '@perun-web-apps/perun/urns';
 
 export const TABLE_ITEMS_COUNT_OPTIONS = [5, 10, 25, 100];
 
@@ -35,20 +40,18 @@ export const emailRegexString =
  */
 export function parseEmail(richMember: RichMember): string {
   let email = '';
-  if (richMember && richMember.userAttributes !== null) {
-    richMember.userAttributes.forEach((attr) => {
-      if (attr.friendlyName === 'preferredMail') {
-        email = <string>(<unknown>attr.value);
+  richMember?.userAttributes.forEach((attr) => {
+    if (attr.friendlyName === 'preferredMail') {
+      email = attr.value as string;
+    }
+  });
+
+  if (email && email.length === 0 && richMember.memberAttributes !== null) {
+    richMember.memberAttributes.forEach((attr) => {
+      if (attr.friendlyName === 'mail' && attr.value !== null) {
+        email = attr.value as string;
       }
     });
-
-    if (email && email.length === 0 && richMember.memberAttributes !== null) {
-      richMember.memberAttributes.forEach((attr) => {
-        if (attr.friendlyName === 'mail' && attr.value !== null) {
-          email = <string>(<unknown>attr.value);
-        }
-      });
-    }
   }
   return email;
 }
@@ -63,7 +66,7 @@ export function parseUserEmail(richUser: RichUser): string {
   if (richUser) {
     richUser.userAttributes.forEach((attr) => {
       if (attr.friendlyName === 'preferredMail') {
-        email = <string>(<unknown>attr.value);
+        email = attr.value as string;
       }
     });
   }
@@ -77,7 +80,7 @@ export function parseUserLogins(richUser: RichUser): string {
       .filter((attr) => attr.baseFriendlyName === 'login-namespace')
       .filter((attr) => attr.value !== null)
       .forEach((attr) => {
-        logins += attr.friendlyNameParameter + ': ' + attr.value + ', ';
+        logins = logins.concat(attr.friendlyNameParameter, ': ', attr.value as string, ', ');
       });
   }
 
@@ -100,7 +103,7 @@ export function parseLogins(richMember: RichMember | RichUser): string {
       .filter((attr) => attr.baseFriendlyName === 'login-namespace')
       .filter((attr) => attr.value !== null)
       .forEach((attr) => {
-        logins += attr.friendlyNameParameter + ': ' + attr.value + ', ';
+        logins = logins.concat(attr.friendlyNameParameter, ': ', attr.value as string, ', ');
       });
   }
 
@@ -218,12 +221,12 @@ export function parseTechnicalOwnersNames(owners: Owner[]): string {
   return names;
 }
 
-export async function doAfterDelay(delayMs: number, callback: () => void) {
+export async function doAfterDelay(delayMs: number, callback: () => void): Promise<void> {
   await delay(delayMs);
   callback();
 }
 
-export function delay(ms: number) {
+export function delay(ms: number): Promise<number> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -232,10 +235,29 @@ export function delay(ms: number) {
  *
  * @param key of local storage
  */
-export function getRecentlyVisitedIds(key: string): any[] {
-  const recentIds: number[] = JSON.parse(localStorage.getItem(key));
+export function getRecentlyVisitedIds(key: string): number[] {
+  const recentIds: number[] = JSON.parse(localStorage.getItem(key)) as number[];
   if (recentIds) {
     return recentIds;
+  }
+  return [];
+}
+
+export interface RecentItem {
+  id: number;
+  type: string;
+  voName: string;
+}
+
+/**
+ * Returns saved ids for given key.
+ *
+ * @param key of local storage
+ */
+export function getRecentlyVisitedItems(key: string): RecentItem[] {
+  const recentItems: RecentItem[] = JSON.parse(localStorage.getItem(key)) as RecentItem[];
+  if (recentItems) {
+    return recentItems;
   }
   return [];
 }
@@ -246,14 +268,14 @@ export function getRecentlyVisitedIds(key: string): any[] {
  * @param key of localStorage
  * @param item entity that was visited
  */
-export function addRecentlyVisited(key: string, item: any) {
+export function addRecentlyVisited(key: string, item: Vo | Facility | Group): void {
   if (localStorage.getItem(key) === null) {
     // if user not have any in local storage
     const recent: number[] = [];
     recent.unshift(item.id);
     localStorage.setItem(key, JSON.stringify(recent));
   } else {
-    const recent: number[] = JSON.parse(localStorage.getItem(key));
+    const recent: number[] = JSON.parse(localStorage.getItem(key)) as number[];
     const index = indexOfEntity(recent, item.id);
     if (index > 0) {
       // if entity is in recent but not of first place, then we remove it to placed it first
@@ -271,13 +293,22 @@ export function addRecentlyVisited(key: string, item: any) {
   }
 }
 
+interface RecentEntity {
+  id: number;
+  name: string;
+  fullName?: string;
+  type: string;
+  voId?: number | null;
+  voName?: string | null;
+}
+
 /**
  * Add object that was just visited to 'recent' localStorage.
  *
  * @param item entity that was visited
  * @param voName is used for group tooltip on dashboard (we want to know parent VO of this group)
  */
-export function addRecentlyVisitedObject(item: any, voName?: string) {
+export function addRecentlyVisitedObject(item: Vo & Facility & Group, voName?: string): void {
   if (localStorage.getItem('recent') === null) {
     // if user not have any in local storage
     let recent;
@@ -297,8 +328,8 @@ export function addRecentlyVisitedObject(item: any, voName?: string) {
     }
     localStorage.setItem('recent', JSON.stringify(recent));
   } else {
-    const recent: any[] = JSON.parse(localStorage.getItem('recent'));
-    let object;
+    const recent: RecentEntity[] = JSON.parse(localStorage.getItem('recent')) as RecentEntity[];
+    let object: RecentEntity;
     if (item.beanName === 'Group') {
       object = {
         id: item.id,
@@ -328,7 +359,7 @@ export function addRecentlyVisitedObject(item: any, voName?: string) {
   }
 }
 
-export function indexOfObject(recent: any[], object: any) {
+export function indexOfObject(recent: RecentEntity[], object: RecentEntity): number {
   for (let i = 0; i < recent.length; i++) {
     if (recent[i].id === object.id) {
       if (recent[i].type === object.type) {
@@ -339,7 +370,7 @@ export function indexOfObject(recent: any[], object: any) {
   return -1;
 }
 
-export function indexOfEntity(recent: number[], id: number) {
+export function indexOfEntity(recent: number[], id: number): number {
   for (let i = 0; i < recent.length; i++) {
     if (recent[i] === id) {
       return i;
@@ -358,7 +389,7 @@ export function parseVo(richUser: RichUser): string {
   if (richUser) {
     richUser.userAttributes.forEach((attr) => {
       if (attr.friendlyName === 'organization') {
-        result = <string>(<unknown>attr.value);
+        result = attr.value as string;
       }
     });
   }
@@ -448,7 +479,7 @@ export function getExtSourceNameOrOrganizationColumn(candidate: Candidate): stri
 export function convertCertCN(toConvert: string): string {
   if (toConvert.includes('/CN=')) {
     const splitted = toConvert.split('/');
-    for (const s in splitted) {
+    for (const s of splitted) {
       if (s.startsWith('CN=')) {
         return unescapeDN(s.substring(3));
       }
@@ -623,20 +654,18 @@ export function parseMemberStatus(memberStatus: string, memberGroupStatus?: stri
 export function parseOrganization(richMember: RichMember): string {
   let organization = '';
 
-  if (richMember && richMember.memberAttributes !== null) {
-    richMember.memberAttributes.forEach((attr) => {
-      if (attr.friendlyName === 'organization' && attr.value !== null) {
-        organization = <string>(<unknown>attr.value);
+  richMember?.memberAttributes.forEach((attr) => {
+    if (attr.friendlyName === 'organization' && attr.value !== null) {
+      organization = attr.value as string;
+    }
+  });
+
+  if (organization.length === 0) {
+    richMember?.userAttributes.forEach((attr) => {
+      if (attr.friendlyName === 'organization') {
+        organization = attr.value as string;
       }
     });
-
-    if (organization.length === 0 && richMember.userAttributes !== null) {
-      richMember.userAttributes.forEach((attr) => {
-        if (attr.friendlyName === 'organization') {
-          organization = <string>(<unknown>attr.value);
-        }
-      });
-    }
   }
   return organization;
 }
@@ -645,10 +674,8 @@ export function getGroupExpiration(group: RichGroup): string {
   const attribute = group.attributes.find(
     (att) => att.baseFriendlyName === 'groupMembershipExpiration'
   );
-  if (attribute && attribute.value) {
-    return attribute.value as unknown as string;
-  }
-  return 'Never';
+
+  return (attribute?.value as string) ?? 'Never';
 }
 
 export function parseDate(value: string): string {
@@ -659,78 +686,75 @@ export function parseDate(value: string): string {
 }
 
 const collator = new Intl.Collator('cs', { numeric: true });
-export function customDataSourceSort(
-  data: any[],
+export function customDataSourceSort<T>(
+  data: T[],
   sort: MatSort,
-  getDataForColumn: (data: any, column: string, outerThis: any) => string,
-  outerThis: any
-) {
+  getDataForColumn: (data: T, column: string) => string
+): T[] {
   const active = sort.active;
   const direction = sort.direction;
   if (!active || direction === '') {
     return data;
   }
   return data.sort((a, b) => {
-    const dataStrA = getDataForColumn(a, active, outerThis);
-    const dataStrB = getDataForColumn(b, active, outerThis);
+    const dataStrA = getDataForColumn(a, active);
+    const dataStrB = getDataForColumn(b, active);
     return collator.compare(dataStrA, dataStrB) * (direction === 'asc' ? 1 : -1);
   });
 }
 
-export function customDataSourceFilterPredicate(
-  data: any,
+export function customDataSourceFilterPredicate<T>(
+  data: T,
   filter: string,
   columns: string[],
-  getDataForColumn: (data: any, column: string, outerThis: any) => string,
-  outerThis: any,
+  getDataForColumn: (data: T, column: string) => string,
   filterByUUID?: boolean
-) {
+): boolean {
   filter = filter.toLowerCase();
   let dataStr = '';
   columns.forEach((col) => {
-    dataStr += ';' + getDataForColumn(data, col, outerThis);
+    dataStr += ';' + getDataForColumn(data, col);
   });
   if (filterByUUID) {
-    dataStr += ';' + getDataForColumn(data, 'uuid', outerThis);
+    dataStr += ';' + getDataForColumn(data, 'uuid');
   }
-  return dataStr.toLowerCase().indexOf(filter) !== -1;
+  return dataStr.toLowerCase().includes(filter);
 }
 
-export function parseAttribute(data: Author, nameOfAttribute: string) {
+export function parseAttribute(data: Author, nameOfAttribute: string): string {
   let attribute = '';
   if (data.attributes) {
     data.attributes.forEach((attr) => {
       if (attr.friendlyName === nameOfAttribute) {
-        attribute = <string>(<unknown>attr.value);
+        attribute = attr.value as string;
       }
     });
   }
   return attribute;
 }
 
-export function getDataForExport(
-  data: any,
+export function getDataForExport<T>(
+  data: T[],
   columns: string[],
-  getDataForColumn: (data: any, column: string, outerThis: any) => string,
-  outerThis: any
-) {
-  const result = [];
+  getDataForColumn: (data: T, column: string) => string
+): T[] {
+  const result: T[] = [];
   const skippedColumns = ['checkbox', 'select', 'edit', 'menu', 'cite', 'extend', 'recent'];
   columns = columns.filter((c) => !skippedColumns.includes(c));
   data.forEach((row) => {
-    const resultRow = {};
+    const resultRow: T = {} as T;
     columns.forEach((col) => {
-      resultRow[col] = (getDataForColumn(row, col, outerThis) ?? '').split('"').join("''").trim();
+      resultRow[col] = (getDataForColumn(row, col) ?? '').split('"').join("''").trim();
     });
     result.push(resultRow);
   });
   return result;
 }
 
-export function downloadData(data: any, format = 'csv', filename = 'export') {
+export function downloadData<T>(data: T[], format = 'csv', filename = 'export'): void {
   switch (format) {
     case 'csv': {
-      const replacer = (key, value) => (value === null ? '' : value);
+      const replacer = (key, value): string => (value === null ? '' : (value as string));
       const header = Object.keys(data[0]);
       const csv = data.map((row) =>
         header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(',')
@@ -738,13 +762,14 @@ export function downloadData(data: any, format = 'csv', filename = 'export') {
       csv.unshift(header.join(',').split(' ').join('_').split('"').join("''"));
       const csvArray = csv.join('\r\n');
 
-      const blob = new Blob([csvArray], { type: 'text/csv' });
+      const blob: Blob = new Blob([csvArray], { type: 'text/csv' });
       saveAs(blob, `${filename}.${format}`);
     }
   }
 }
 
-export function compareFnName(a, b) {
+type ComparableEntity = Facility | Resource | Group;
+export function compareFnName(a: ComparableEntity, b: ComparableEntity): 1 | 0 | -1 {
   return a.name.toLowerCase() > b.name.toLowerCase()
     ? 1
     : a.name.toLowerCase() === b.name.toLowerCase()
@@ -752,7 +777,7 @@ export function compareFnName(a, b) {
     : -1;
 }
 
-export function compareFnDisplayName(a, b) {
+export function compareFnDisplayName(a: AttributeDefinition, b: AttributeDefinition): number {
   return a.displayName.toLowerCase() > b.displayName.toLowerCase()
     ? 1
     : a.displayName.toLowerCase() === b.displayName.toLowerCase()
@@ -760,7 +785,8 @@ export function compareFnDisplayName(a, b) {
     : -1;
 }
 
-export function compareFnUser(a, b) {
+type ComparablePerson = User & RichMember;
+export function compareFnUser(a: ComparablePerson, b: ComparablePerson): number {
   let first, second;
   if (a.user) {
     first = a.user.lastName ? a.user.lastName : a.user.firstName ?? '';
@@ -776,11 +802,33 @@ export function enableFormControl(
   control: AbstractControl,
   validators: ValidatorFn[],
   asyncValidators: AsyncValidatorFn[] = []
-) {
+): void {
   control.enable();
   control.clearValidators();
   control.clearAsyncValidators();
   control.setValidators(validators);
   control.setAsyncValidators(asyncValidators);
   control.updateValueAndValidity();
+}
+
+export function hasBooleanAttributeEnabled(
+  attributes: Attribute[],
+  attributeName: string
+): boolean {
+  if (attributes) {
+    return attributes.some(
+      (attribute) =>
+        attribute.namespace + ':' + attribute.friendlyName === attributeName &&
+        attribute.value !== null &&
+        String(attribute.value) === 'true'
+    );
+  }
+  return false;
+}
+
+export function isGroupSynchronized(group: RichGroup): boolean {
+  return (
+    hasBooleanAttributeEnabled(group.attributes, Urns.GROUP_SYNC_ENABLED) ||
+    hasBooleanAttributeEnabled(group.attributes, Urns.GROUP_STRUCTURE_SYNC_ENABLED)
+  );
 }

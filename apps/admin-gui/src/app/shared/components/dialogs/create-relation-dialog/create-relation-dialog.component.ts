@@ -1,6 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Group, GroupsManagerService } from '@perun-web-apps/perun/openapi';
+import {
+  EnrichedVo,
+  Group,
+  GroupsManagerService,
+  Vo,
+  VosManagerService,
+} from '@perun-web-apps/perun/openapi';
 import { SelectionModel } from '@angular/cdk/collections';
 import { GuiAuthResolver, NotificatorService } from '@perun-web-apps/perun/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,54 +26,75 @@ export interface CreateRelationDialogData {
   styleUrls: ['./create-relation-dialog.component.scss'],
 })
 export class CreateRelationDialogComponent implements OnInit {
+  selection = new SelectionModel<Group>(false, []);
+  groups: Group[];
+  theme: string;
+  filterValue = '';
+  initLoading: boolean;
+  loading: boolean;
+  tableId = TABLE_CREATE_RELATION_GROUP_DIALOG;
+  thisVo: EnrichedVo;
+  groupsToNotInclude: number[];
+  groupsToDisable: Set<number> = new Set<number>();
+  vosToSelect: Vo[] = [];
+  private successMessage: string;
+
   constructor(
     private dialogRef: MatDialogRef<CreateRelationDialogComponent>,
     private groupService: GroupsManagerService,
     private notificator: NotificatorService,
     private translate: TranslateService,
     private guiAuthResolver: GuiAuthResolver,
+    private voService: VosManagerService,
     @Inject(MAT_DIALOG_DATA) public data: CreateRelationDialogData
   ) {
     translate
       .get('DIALOGS.CREATE_RELATION.SUCCESS')
-      .subscribe((value) => (this.successMessage = value));
+      .subscribe((value: string) => (this.successMessage = value));
   }
 
-  successMessage: string;
-  selection = new SelectionModel<Group>(false, []);
-  groups: Group[];
-  theme: string;
-  filterValue = '';
-  loading: boolean;
-
-  tableId = TABLE_CREATE_RELATION_GROUP_DIALOG;
-
-  groupsToDisable: Set<number> = new Set<number>();
-
-  ngOnInit() {
-    this.loading = true;
+  ngOnInit(): void {
+    this.initLoading = true;
     this.groupService.getGroupUnions(this.data.group.id, !this.data.reverse).subscribe(
       (unionGroups) => {
         unionGroups = unionGroups.concat(this.data.groups);
-        this.groupService.getAllGroups(this.data.voId).subscribe(
-          (allGroups) => {
-            const groupIds = unionGroups.map((elem) => elem.id);
-            this.groups = allGroups.filter(
-              (group) => !groupIds.includes(group.id) && group.id !== this.data.group.id
-            );
-            this.setGroupsToDisable();
-            this.loading = false;
-          },
-          () => (this.loading = false)
-        );
+        this.groupsToNotInclude = unionGroups.map((elem) => elem.id);
+        this.voService.getEnrichedVoById(this.data.voId).subscribe((enrichedVo) => {
+          this.thisVo = enrichedVo;
+          this.vosToSelect = enrichedVo.memberVos.filter((vo) =>
+            this.guiAuthResolver.isAuthorized('getAllAllowedGroupsToHierarchicalVo_Vo_policy', [vo])
+          );
+          this.vosToSelect.push(enrichedVo.vo);
+          this.getGroupsToInclude(this.data.voId);
+          this.initLoading = false;
+        });
       },
-      () => (this.loading = false)
+      () => (this.initLoading = false)
     );
     this.theme = this.data.theme;
   }
 
   onCancel(): void {
     this.dialogRef.close(false);
+  }
+
+  getGroupsToInclude(voId: number): void {
+    this.loading = true;
+    if (voId === this.data.voId) {
+      this.groupService.getAllGroups(this.data.voId).subscribe(
+        (allGroups) => {
+          this.finishLoadingGroups(allGroups);
+        },
+        () => (this.loading = false)
+      );
+    } else {
+      this.groupService.getVoAllAllowedGroupsToHierarchicalVo(this.data.voId, voId).subscribe(
+        (groups) => {
+          this.finishLoadingGroups(groups);
+        },
+        () => (this.loading = false)
+      );
+    }
   }
 
   onSubmit(): void {
@@ -82,20 +109,29 @@ export class CreateRelationDialogComponent implements OnInit {
     );
   }
 
-  applyFilter(filterValue: string) {
+  applyFilter(filterValue: string): void {
     this.filterValue = filterValue;
   }
 
-  private setGroupsToDisable() {
+  private setGroupsToDisable(): void {
     for (const group of this.groups) {
       if (
-        !this.guiAuthResolver.isAuthorized('createGroupUnion_Group_Group_policy', [
+        !this.guiAuthResolver.isAuthorized('result-createGroupUnion_Group_Group_policy', [
           this.data.group,
-          group,
-        ])
+        ]) ||
+        !this.guiAuthResolver.isAuthorized('operand-createGroupUnion_Group_Group_policy', [group])
       ) {
         this.groupsToDisable.add(group.id);
       }
     }
+  }
+
+  private finishLoadingGroups(groups: Group[]): void {
+    this.groups = groups.filter(
+      (group) => !this.groupsToNotInclude.includes(group.id) && group.id !== this.data.group.id
+    );
+    this.setGroupsToDisable();
+    this.selection.clear();
+    this.loading = false;
   }
 }

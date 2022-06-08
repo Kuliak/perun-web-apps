@@ -10,26 +10,24 @@ import { getDefaultDialogConfig, isVirtualAttribute } from '@perun-web-apps/peru
   styleUrls: ['./attribute-value-map.component.scss'],
 })
 export class AttributeValueMapComponent implements OnInit {
-  constructor(private dialog: MatDialog) {}
-
-  @Input()
-  attribute: Attribute;
-
-  @Input()
-  readonly = false;
+  @Input() attribute: Attribute;
+  @Input() readonly = false;
 
   keys: string[] = [];
   values: string[] = [];
 
   defaultItemsShown = 3;
   itemsShown: number;
-
   showMore = false;
 
-  ngOnInit() {
+  constructor(private dialog: MatDialog) {}
+
+  ngOnInit(): void {
     if (this.attribute.value) {
-      const map = this.attribute.value as Map<string, string>;
-      for (const [key, value] of Object.entries(map)) {
+      const map = new Map<string, string>(
+        Object.entries(this.attribute.value as { [s: string]: string })
+      );
+      for (const [key, value] of map.entries()) {
         this.keys.push(key);
         this.values.push(value);
       }
@@ -41,11 +39,11 @@ export class AttributeValueMapComponent implements OnInit {
     }
   }
 
-  customTrackBy(index: number): any {
+  customTrackBy(index: number): number {
     return index;
   }
 
-  addValue() {
+  addValue(): void {
     this.keys.push('');
     this.values.push('');
 
@@ -55,12 +53,12 @@ export class AttributeValueMapComponent implements OnInit {
     }
   }
 
-  removeValue(index: number) {
+  removeValue(index: number): void {
     this.keys.splice(index, 1);
     this.values.splice(index, 1);
   }
 
-  updateAttribute() {
+  updateAttribute(): void {
     const map = {};
     for (let i = 0; i < this.keys.length; i++) {
       map[this.keys[i]] = this.values[i];
@@ -72,7 +70,7 @@ export class AttributeValueMapComponent implements OnInit {
     }
   }
 
-  showValue(value: string, title: string) {
+  showValue(value: string, title: string): void {
     const config = getDefaultDialogConfig();
     config.width = '350px';
     config.data = {
@@ -82,17 +80,17 @@ export class AttributeValueMapComponent implements OnInit {
     this.dialog.open(ShowValueDialogComponent, config);
   }
 
-  setItemsShown() {
+  onShowChange(): void {
+    this.showMore = !this.showMore;
+
+    this.setItemsShown();
+  }
+
+  private setItemsShown(): void {
     if (this.showMore) {
       this.itemsShown = this.values.length;
     } else {
       this.itemsShown = this.defaultItemsShown;
     }
-  }
-
-  onShowChange() {
-    this.showMore = !this.showMore;
-
-    this.setItemsShown();
   }
 }

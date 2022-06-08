@@ -9,29 +9,21 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
   animations: [openClose],
 })
 export class SettingsToggleItemComponent implements AfterViewInit {
-  constructor() {}
-
   @ViewChild(MatSlideToggle, { static: true })
   toggle: MatSlideToggle;
-
   @Input()
   title: string;
 
-  modelValue: boolean;
-
   @Output() modelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Input() get model(): boolean {
-    return this.modelValue;
-  }
-  set model(value: boolean) {
-    this.modelValue = value;
-  }
+
+  @Input()
+  modelValue: boolean;
 
   ngAfterViewInit(): void {
     this.toggle.change.subscribe(() => this.valueChanged());
   }
 
-  valueChanged() {
+  valueChanged(): void {
     this.modelChange.emit(this.toggle.checked);
   }
 }

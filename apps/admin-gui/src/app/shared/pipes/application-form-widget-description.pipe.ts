@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Type } from '@perun-web-apps/perun/openapi';
 
 @Pipe({
   name: 'applicationFormWidgetDescription',
@@ -9,12 +10,12 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
 
   constructor(private translateService: TranslateService) {}
 
-  transform(value: any): any {
+  transform(value: Type): string {
     switch (value) {
       case 'HEADING': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.HEADER')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -22,7 +23,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'HTML_COMMENT': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.HTML_COMMENT')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -30,7 +31,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'TEXTFIELD': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.TEXTFIELD')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -38,7 +39,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'VALIDATED_EMAIL': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.VALIDATED_EMAIL')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -46,7 +47,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'USERNAME': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.USERNAME')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -54,7 +55,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'PASSWORD': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.PASSWORD')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -62,7 +63,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'SELECTIONBOX': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.SELECTIONBOX')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -70,7 +71,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'TEXTAREA': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.TEXTAREA')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -78,7 +79,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'COMBOBOX': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.COMBOBOX')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -86,7 +87,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'CHECKBOX': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.CHECKBOX')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -94,7 +95,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'SUBMIT_BUTTON': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.SUBMIT_BUTTON')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -102,7 +103,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'RADIO': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.RADIO')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -110,7 +111,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'TIMEZONE': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.TIMEZONE')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -118,7 +119,7 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'AUTO_SUBMIT_BUTTON': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.AUTO_SUBMIT_BUTTON')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;
@@ -126,7 +127,23 @@ export class ApplicationFormWidgetDescriptionPipe implements PipeTransform {
       case 'EMBEDDED_GROUP_APPLICATION': {
         this.translateService
           .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.EMBEDDED_GROUP_APPLICATION')
-          .subscribe((text) => {
+          .subscribe((text: string) => {
+            this.returnData = text;
+          });
+        break;
+      }
+      case 'LIST_INPUT_BOX': {
+        this.translateService
+          .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.LIST_INPUT_BOX')
+          .subscribe((text: string) => {
+            this.returnData = text;
+          });
+        break;
+      }
+      case 'MAP_INPUT_BOX': {
+        this.translateService
+          .get('VO_DETAIL.SETTINGS.APPLICATION_FORM.WIDGET_DESCRIPTION.MAP_INPUT_BOX')
+          .subscribe((text: string) => {
             this.returnData = text;
           });
         break;

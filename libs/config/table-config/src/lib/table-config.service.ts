@@ -20,7 +20,7 @@ export class TableConfigService {
     return 10;
   }
 
-  setTablePageSize(tableId: string, value: number) {
+  setTablePageSize(tableId: string, value: number): void {
     this.guiConfigService.setNumber(LS_TABLE_PREFIX + tableId, value);
   }
 }
@@ -113,3 +113,5 @@ export const TABLE_SEARCHER_USERS = '82';
 export const TABLE_SEARCHER_MEMBERS = '83';
 export const TABLE_SEARCHER_FACILITIES = '84';
 export const TABLE_SEARCHER_RESOURCES = '85';
+export const TABLE_HIERARCHICAL_INCLUSION = '86';
+export const TABLE_ADD_HIERARCHICAL_INCLUSION = '87';

@@ -16,5 +16,5 @@ export const FacilityPropagationState = {
   OK: 'OK' as FacilityPropagationState,
   ERROR: 'ERROR' as FacilityPropagationState,
   PROCESSING: 'PROCESSING' as FacilityPropagationState,
-  NOTDETERMINED: 'NOT_DETERMINED' as FacilityPropagationState,
+  NOT_DETERMINED: 'NOT_DETERMINED' as FacilityPropagationState,
 };

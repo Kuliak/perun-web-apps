@@ -17,6 +17,8 @@ import {
 } from '@perun-web-apps/perun/dialogs';
 import { DeleteFacilityDialogComponent } from '../../../shared/components/dialogs/delete-facility-dialog/delete-facility-dialog.component';
 import { ReloadEntityDetailService } from '../../../core/services/common/reload-entity-detail.service';
+import { destroyDetailMixin } from '../../../shared/destroy-entity-detail';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-facility-detail-page',
@@ -24,7 +26,12 @@ import { ReloadEntityDetailService } from '../../../core/services/common/reload-
   styleUrls: ['./facility-detail-page.component.scss'],
   animations: [fadeIn],
 })
-export class FacilityDetailPageComponent implements OnInit {
+export class FacilityDetailPageComponent extends destroyDetailMixin() implements OnInit {
+  facility: Facility;
+  editFacilityAuth = false;
+  deleteAuth = false;
+  loading = false;
+
   constructor(
     private dialog: MatDialog,
     private facilityManager: FacilitiesManagerService,
@@ -35,24 +42,21 @@ export class FacilityDetailPageComponent implements OnInit {
     private router: Router,
     private entityStorageService: EntityStorageService,
     private reloadEntityDetail: ReloadEntityDetailService
-  ) {}
+  ) {
+    super();
+  }
 
-  facility: Facility;
-  editFacilityAuth = false;
-  deleteAuth = false;
-  loading = false;
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.reloadData();
-    this.reloadEntityDetail.entityDetailChange.subscribe(() => {
+    this.reloadEntityDetail.entityDetailChange.pipe(takeUntil(this.destroyed$)).subscribe(() => {
       this.reloadData();
     });
   }
 
-  reloadData() {
+  reloadData(): void {
     this.loading = true;
     this.route.params.subscribe((params) => {
-      const facilityId = params['facilityId'];
+      const facilityId = Number(params['facilityId']);
 
       this.facilityManager.getFacilityById(facilityId).subscribe(
         (facility) => {
@@ -78,12 +82,12 @@ export class FacilityDetailPageComponent implements OnInit {
     });
   }
 
-  setMenuItems() {
+  setMenuItems(): void {
     const facilityItem = this.sideMenuItemService.parseFacility(this.facility);
     this.sideMenuService.setFacilityMenuItems([facilityItem]);
   }
 
-  editFacility() {
+  editFacility(): void {
     const config = getDefaultDialogConfig();
     config.width = '450px';
     config.data = {
@@ -103,7 +107,7 @@ export class FacilityDetailPageComponent implements OnInit {
     });
   }
 
-  deleteFacility() {
+  deleteFacility(): void {
     const config = getDefaultDialogConfig();
     config.width = '500px';
     config.data = {
@@ -114,7 +118,7 @@ export class FacilityDetailPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.router.navigate(['']);
+        void this.router.navigate(['']);
       }
     });
   }

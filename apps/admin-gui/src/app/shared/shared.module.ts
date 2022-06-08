@@ -97,7 +97,6 @@ import { RemoveGroupFromResourceDialogComponent } from './components/dialogs/rem
 import { AssignGroupToResourceDialogComponent } from './components/dialogs/assign-group-to-resource-dialog/assign-group-to-resource-dialog.component';
 import { CreateResourceDialogComponent } from './components/dialogs/create-resource-dialog/create-resource-dialog.component';
 import { ExtSourceTypePipe } from './pipes/ext-source-type.pipe';
-// @ts-ignore
 import { PerunSharedComponentsModule } from '@perun-web-apps/perun/components';
 import { ConfigTableConfigModule } from '@perun-web-apps/config/table-config';
 import { MemberStatusTooltipPipe, PerunPipesModule } from '@perun-web-apps/perun/pipes';
@@ -155,7 +154,6 @@ import { DeleteOwnerDialogComponent } from './components/delete-owner-dialog/del
 import { StatisticsCardComponent } from './components/statistics-card/statistics-card.component';
 import { ApplicationFormItemDisabledPipe } from './pipes/application-form-item-disabled.pipe';
 import { ApplicationFormItemHiddenPipe } from './pipes/application-form-item-hidden.pipe';
-import { DeleteEntityDialogComponent } from './components/dialogs/delete-entity-dialog/delete-entity-dialog.component';
 import { MatListModule } from '@angular/material/list';
 import { EditApplicationFormItemLineComponent } from './components/dialogs/edit-application-form-item-dialog/edit-application-form-item-line/edit-application-form-item-line.component';
 import { AddGroupToRegistrationComponent } from './components/dialogs/add-group-to-registration/add-group-to-registration.component';
@@ -172,6 +170,9 @@ import { ParseEventNamePipe } from './pipes/parse-event-name.pipe';
 import { ConsentHubsListComponent } from './components/consent-hubs-list/consent-hubs-list.component';
 import { EditEnforceConsentsDialogComponent } from './components/dialogs/edit-enforce-consents-dialog/edit-enforce-consents-dialog.component';
 import { ConsentRelatedAttributePipe } from './pipes/consent-related-attribute.pipe';
+import { MemberTypePipe } from './pipes/member-type.pipe';
+import { PerunDialogsModule } from '@perun-web-apps/perun/dialogs';
+import { AddGroupHierarchicalIncludeDialogComponent } from './components/dialogs/add-group-hierarchical-include-dialog/add-group-hierarchical-include-dialog.component';
 
 @NgModule({
   imports: [
@@ -222,6 +223,7 @@ import { ConsentRelatedAttributePipe } from './pipes/consent-related-attribute.p
     MatListModule,
     PerunUtilsModule,
     PerunNamespacePasswordFormModule,
+    PerunDialogsModule,
   ],
   exports: [
     NgxMatSelectSearchModule,
@@ -423,7 +425,6 @@ import { ConsentRelatedAttributePipe } from './pipes/consent-related-attribute.p
     StatisticsCardComponent,
     ApplicationFormItemDisabledPipe,
     ApplicationFormItemHiddenPipe,
-    DeleteEntityDialogComponent,
     EditApplicationFormItemLineComponent,
     AddGroupToRegistrationComponent,
     OneEntityAttributePageComponent,
@@ -437,6 +438,8 @@ import { ConsentRelatedAttributePipe } from './pipes/consent-related-attribute.p
     ConsentHubsListComponent,
     EditEnforceConsentsDialogComponent,
     ConsentRelatedAttributePipe,
+    MemberTypePipe,
+    AddGroupHierarchicalIncludeDialogComponent,
   ],
   providers: [AnyToStringPipe, ExtSourceTypePipe, ConsentRelatedAttributePipe],
 })

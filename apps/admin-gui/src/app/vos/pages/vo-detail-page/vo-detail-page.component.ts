@@ -17,6 +17,8 @@ import {
 } from '@perun-web-apps/perun/dialogs';
 import { RemoveVoDialogComponent } from '../../../shared/components/dialogs/remove-vo-dialog/remove-vo-dialog.component';
 import { ReloadEntityDetailService } from '../../../core/services/common/reload-entity-detail.service';
+import { destroyDetailMixin } from '../../../shared/destroy-entity-detail';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-vo-detail-page',
@@ -24,7 +26,13 @@ import { ReloadEntityDetailService } from '../../../core/services/common/reload-
   styleUrls: ['./vo-detail-page.component.scss'],
   animations: [fadeIn],
 })
-export class VoDetailPageComponent implements OnInit {
+export class VoDetailPageComponent extends destroyDetailMixin() implements OnInit {
+  vo: Vo;
+  enrichedVo: EnrichedVo;
+  editAuth: boolean;
+  loading = false;
+  removeAuth: boolean;
+
   constructor(
     private sideMenuService: SideMenuService,
     private voService: VosManagerService,
@@ -35,25 +43,21 @@ export class VoDetailPageComponent implements OnInit {
     private authResolver: GuiAuthResolver,
     private entityStorageService: EntityStorageService,
     private reloadEntityDetail: ReloadEntityDetailService
-  ) {}
+  ) {
+    super();
+  }
 
-  vo: Vo;
-  enrichedVo: EnrichedVo;
-  editAuth: boolean;
-  loading = false;
-  removeAuth: boolean;
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.reloadData();
-    this.reloadEntityDetail.entityDetailChange.subscribe(() => {
+    this.reloadEntityDetail.entityDetailChange.pipe(takeUntil(this.destroyed$)).subscribe(() => {
       this.reloadData();
     });
   }
 
-  reloadData() {
+  reloadData(): void {
     this.loading = true;
     this.route.params.subscribe((params) => {
-      const voId = params['voId'];
+      const voId = Number(params['voId']);
 
       this.voService.getEnrichedVoById(voId).subscribe(
         (enrichedVo) => {
@@ -75,7 +79,7 @@ export class VoDetailPageComponent implements OnInit {
     });
   }
 
-  editVo() {
+  editVo(): void {
     const config = getDefaultDialogConfig();
     config.width = '450px';
     config.data = {
@@ -95,14 +99,14 @@ export class VoDetailPageComponent implements OnInit {
     });
   }
 
-  setMenuItems() {
+  setMenuItems(): void {
     const isHierarchical = this.enrichedVo.memberVos.length !== 0;
-    const sideMenuItem = this.sideMenuItemService.parseVo(this.vo, isHierarchical);
-
+    const isMemberVo = this.enrichedVo.parentVos.length !== 0;
+    const sideMenuItem = this.sideMenuItemService.parseVo(this.vo, isHierarchical, isMemberVo);
     this.sideMenuService.setAccessMenuItems([sideMenuItem]);
   }
 
-  removeVo() {
+  removeVo(): void {
     const config = getDefaultDialogConfig();
     config.width = '500px';
     config.data = {
@@ -113,7 +117,7 @@ export class VoDetailPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.router.navigate(['']);
+        void this.router.navigate(['']);
       }
     });
   }

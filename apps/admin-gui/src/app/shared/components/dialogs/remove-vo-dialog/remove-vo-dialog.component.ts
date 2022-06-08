@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificatorService } from '@perun-web-apps/perun/services';
 import { Vo, VosManagerService } from '@perun-web-apps/perun/openapi';
+import { DeleteDialogResult } from '@perun-web-apps/perun/dialogs';
 
 export interface RemoveVoDialogData {
   vos: Vo[];
@@ -16,6 +17,14 @@ export interface RemoveVoDialogData {
   styleUrls: ['./remove-vo-dialog.component.scss'],
 })
 export class RemoveVoDialogComponent implements OnInit {
+  successMessage: string;
+  theme: string;
+  force = false;
+  loading: boolean;
+  displayedColumns: string[] = ['name'];
+  dataSource: MatTableDataSource<Vo>;
+  relations: string[] = [];
+
   constructor(
     private dialogRef: MatDialogRef<RemoveVoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private data: RemoveVoDialogData,
@@ -23,32 +32,24 @@ export class RemoveVoDialogComponent implements OnInit {
     private voService: VosManagerService,
     private translate: TranslateService
   ) {
-    translate.get('DIALOGS.REMOVE_VO.SUCCESS').subscribe((value) => (this.successMessage = value));
+    translate
+      .get('DIALOGS.REMOVE_VO.SUCCESS')
+      .subscribe((value: string) => (this.successMessage = value));
   }
 
-  successMessage: string;
-  theme: string;
-  force = false;
-  loading: boolean;
-
-  displayedColumns: string[] = ['name'];
-  dataSource: MatTableDataSource<Vo>;
-
-  relations: string[] = [];
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.theme = this.data.theme;
     this.dataSource = new MatTableDataSource<Vo>(this.data.vos);
-    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.GROUP_RELATION'));
-    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.MEMBER_RELATION'));
-    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.RESOURCE_RELATION'));
+    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.GROUP_RELATION') as string);
+    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.MEMBER_RELATION') as string);
+    this.relations.push(this.translate.instant('DIALOGS.REMOVE_VO.RESOURCE_RELATION') as string);
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close(false);
   }
 
-  onDelete() {
+  onDelete(): void {
     this.loading = true;
     //TODO Works for one Vo at the time, in future there may be need to remove  more Vos at once
     this.voService.deleteVo(this.data.vos[0].id, this.force).subscribe(
@@ -61,7 +62,7 @@ export class RemoveVoDialogComponent implements OnInit {
     );
   }
 
-  onSubmit(result: { deleted: boolean; force: boolean }) {
+  onSubmit(result: DeleteDialogResult): void {
     this.force = result.force;
     if (result.deleted) {
       this.onDelete();

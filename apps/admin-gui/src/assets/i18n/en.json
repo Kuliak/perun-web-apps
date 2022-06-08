@@ -394,7 +394,9 @@
           "RADIO": "Radio (single selection)",
           "TIMEZONE": "Selection of timezone",
           "AUTO_SUBMIT_BUTTON": "Submit button with auto-submit",
-          "EMBEDDED_GROUP_APPLICATION": "Groups for embedded applications"
+          "EMBEDDED_GROUP_APPLICATION": "Groups for embedded applications",
+          "LIST_INPUT_BOX": "List input field",
+          "MAP_INPUT_BOX": "Key - value input field"
         },
         "HIDDEN": {
           "ALWAYS": "Always",
@@ -423,7 +425,9 @@
           "RADIO": "List of defined custom options with radio buttons. Single selection model. Value is stored as a string.",
           "TIMEZONE": "Selection box with predefined values of UTC timezones.",
           "AUTO_SUBMIT_BUTTON": "Button used to auto-submit the form with a custom label. All other form items are checked on valid input before submission. If validation fails (at least once) the user must submit the form manually. If it's OK, then the form is automatically submitted.",
-          "EMBEDDED_GROUP_APPLICATION": "The checkbox of real organization groups which the user can check and thus submit an application to these groups"
+          "EMBEDDED_GROUP_APPLICATION": "The checkbox of real organization groups which the user can check and thus submit an application to these groups",
+          "LIST_INPUT_BOX": "Item is used to show list values",
+          "MAP_INPUT_BOX": "Item is used to show key - value pairs"
         },
         "DISABLED_HIDDEN_ICON": {
           "IF_EMPTY": "If empty",
@@ -542,6 +546,12 @@
           "WARNING": "By removing this organization it's new members won't be imported to your organization.",
           "SUCCESS": "Member organization successfully removed"
         }
+      },
+      "HIERARCHICAL_INCLUSION": {
+        "TITLE": "Hierarchical inclusion",
+        "ADD": "Add",
+        "REMOVE": "Remove",
+        "NO_GROUPS_ALLOWED_ALERT": "No groups are allowed for hierarchical include"
       }
     },
     "APPLICATION": {
@@ -632,7 +642,8 @@
       "INVITE_MEMBER": "Invite",
       "SYNCHRONIZED": "Action is disabled on this group, group is filled with members from external source.",
       "FILTER_STATUS": "Filter by organizations status",
-      "FILTER_GROUP_STATUS": "Filter by group status"
+      "FILTER_GROUP_STATUS": "Filter by group status",
+      "BUTTON_DISABLED_MEMBERS_GROUP": "Action is disabled on this group because it represents all members of the organization. To edit members of the organization go to organization members."
     },
     "RESOURCES": {
       "TITLE": "Resources",
@@ -702,7 +713,7 @@
       },
       "RELATIONS": {
         "TITLE": "Relations",
-        "DELETE": "Remove selected",
+        "DELETE": "Remove",
         "CREATE": "Add",
         "FILTER": "Filter by name, Id or description",
         "REVERSE_UNIONS": "Show reverse unions",
@@ -824,8 +835,9 @@
     "STATUS_CHANGE_SUCCESS": "Service status was successfully changed",
     "ENABLED": "Enabled",
     "DISABLED": "Disabled",
-    "USE_EXPIRED_MEMBERS_ENABLED": "This service is using expired members as well",
-    "USE_EXPIRED_MEMBERS_DISABLED": "This service is not using expired members",
+    "EXPIRED_MEMBERS": "Expired members",
+    "PROPAGATED": "Propagated",
+    "NOT_PROPAGATED": "Not propagated",
     "DESCRIPTION": "Description",
     "REQUIRED_ATTRIBUTES": {
       "TITLE": "Required attributes",
@@ -864,7 +876,8 @@
       "SPONSORED_MEMBERS": "Sponsored members",
       "SERVICE_MEMBERS": "Service accounts",
       "STATISTICS": "Statistics",
-      "MEMBER_ORGANIZATIONS": "Member organizations"
+      "MEMBER_ORGANIZATIONS": "Member organizations",
+      "HIERARCHICAL_INCLUSION": "Hierarchical inclusion"
     },
     "FACILITY": {
       "OVERVIEW": "Overview",
@@ -1110,7 +1123,11 @@
       "INVITE_IN_LANGUAGE": "Send invitation in",
       "LANGUAGE": "language",
       "SUCCESS": "Selected members were added",
-      "SUCCESS_INVITE": "Invite was send to given user",
+      "SUCCESS_INVITE": "Invites were sent to given users",
+      "ERROR_ADD": "There was an error while adding members",
+      "ERROR_INVITE": "There was an error while inviting members" ,
+      "ERROR_ADD_DESC": "Failed to add following users: \n",
+      "ERROR_INVITE_DESC": "Failed to invite following users: \n",
       "VALIDATION_SUCCESS": "Member validation was successful",
       "NO_USERS_FOUND": "No users found",
       "ADD_MEMBER_PERMISSION_TOOLTIP": "You don't have permission to add a member",
@@ -1126,6 +1143,21 @@
       "NO_GROUPS_FOUND": "No groups found",
       "SELECT_VO": "Select organization",
       "FILTER_GROUPS": "Filter groups by Id, name or description"
+    },
+    "ADD_GROUPS_HIERARCHICAL_INCLUSION": {
+      "TITLE": "Allow groups for hierarchical inclusion",
+      "INFO": "Selected groups will be allowed for hierarchical inclusion. Parent organization {{parentVo}} will be able to include these groups (including group members).",
+      "SEARCH": "Search by id, name or description",
+      "NO_GROUPS_FOUND_ALERT": "No groups found.",
+      "CANCEL": "Cancel",
+      "ALLOW": "Allow",
+      "SUCCESS": "Groups were successfully allowed"
+    },
+    "REMOVE_GROUPS_HIERARCHICAL_INCLUSION": {
+      "TITLE": "Disallow groups for hierarchical inclusion",
+      "DESCRIPTION": "Selected groups will be disallowed for hierarchical inclusion.",
+      "ALERT": "Parent organization {{parentVo}} will NOT be able to include these groups.",
+      "SUCCESS": "Groups were successfully disallowed"
     },
     "REMOVE_GROUPS": {
       "TITLE": "Confirm removal",
@@ -1693,6 +1725,8 @@
       "RECURRENCE": "Recurrence:",
       "PATH": "Script path:",
       "STATUS_HINT": "Enabled/Disabled",
+      "EXPIRED_MEMBERS": "Expired members:",
+      "EXPIRED_MEMBERS_HINT": "Propagated/Not propagated",
       "RESTRICTION_NAME": "Name cannot be empty and must contain only letters, digits and _",
       "REQUIRE_PATH": "Script path cannot be empty",
       "INVALID_DELAY": "Delay must be a number",
@@ -2043,15 +2077,22 @@
       "SUCCESS": "Owners successfully removed"
     },
     "DELETE_ENTITY": {
-      "BASIC": "Do you want to delete",
+      "BASIC": "Do you want to {{action}}",
       "ONLY": "only this",
       "OR": "or",
       "RELATIONS": "with all relations",
-      "DELETE": "Delete",
+      "DELETE": "{{action}}",
       "CANCEL": "Cancel",
-      "CONTROL": "Type \"DELETE\" to confirm",
-      "ASK": "Are you sure you want to permanently delete following",
-      "WARN": "This action will also delete all"
+      "CONTROL": "Type \"{{action}}\" to confirm",
+      "ASK": "Are you sure you want to permanently {{action}} following",
+      "WARN": "This action will also delete all",
+      "TYPE_DELETE": "delete",
+      "TYPE_ANONYMIZE": "anonymize"
+    },
+    "ANONYMIZE_USER": {
+      "VO_RELATION": "User's membership in all organizations",
+      "GROUP_RELATION": "User's membership in all groups",
+      "SUCCESS_NOTIFICATION": "User was successfully anonymized"
     },
     "CHANGE_VO_EXPIRATION": {
       "TITLE": "Change member expiration"
@@ -2822,7 +2863,8 @@
         "UNIVERSAL_REMOVE_ITEMS_DIALOG": {
           "ASK": "Do you want to proceed?",
           "CANCEL_BUTTON": "Cancel",
-          "SUBMIT_BUTTON": "Submit"
+          "SUBMIT_BUTTON": "Submit",
+          "REMOVE_BUTTON": "Remove"
         },
         "MEMBER_TREEVIEW_DIALOG": {
           "TITLE": "Indirect membership’s origin of {{name}}",

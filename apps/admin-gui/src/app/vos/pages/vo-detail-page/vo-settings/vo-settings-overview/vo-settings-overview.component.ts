@@ -13,6 +13,11 @@ import { EntityStorageService, GuiAuthResolver } from '@perun-web-apps/perun/ser
 export class VoSettingsOverviewComponent implements OnInit {
   @HostBinding('class.router-component') true;
 
+  items: MenuItem[] = [];
+  loading = false;
+  isMemberOfSomeOrganization = false;
+  private vo: Vo;
+
   constructor(
     private sideMenuService: SideMenuService,
     private voService: VosManagerService,
@@ -21,18 +26,17 @@ export class VoSettingsOverviewComponent implements OnInit {
     private entityStorageService: EntityStorageService
   ) {}
 
-  items: MenuItem[] = [];
-  vo: Vo;
-  loading = false;
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.loading = true;
     this.vo = this.entityStorageService.getEntity();
-    this.initItems();
-    this.loading = false;
+    this.voService.getEnrichedVoById(this.vo.id).subscribe((enrichedVo) => {
+      this.isMemberOfSomeOrganization = enrichedVo.parentVos.length !== 0;
+      this.initItems();
+      this.loading = false;
+    });
   }
 
-  private initItems() {
+  private initItems(): void {
     this.items = [];
     const adminOrObserver = this.authResolver.isThisVoAdminOrObserver(this.vo.id);
 
@@ -87,6 +91,15 @@ export class VoSettingsOverviewComponent implements OnInit {
         cssIcon: 'perun-hierarchical-vo',
         url: `/organizations/${this.vo.id}/settings/memberOrganizations`,
         label: 'MENU_ITEMS.VO.MEMBER_ORGANIZATIONS',
+        style: 'vo-btn',
+      });
+    }
+    // Hierarchical inclusion
+    if (this.authResolver.isPerunAdmin() && this.isMemberOfSomeOrganization) {
+      this.items.push({
+        cssIcon: 'perun-hierarchical-inclusion',
+        url: `/organizations/${this.vo.id}/settings/hierarchicalInclusion`,
+        label: 'MENU_ITEMS.VO.HIERARCHICAL_INCLUSION',
         style: 'vo-btn',
       });
     }

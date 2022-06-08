@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SideMenuService } from '../../../core/services/common/side-menu.service';
 import { SideMenuItemService } from '../../../shared/side-menu/side-menu-item.service';
 import { User, UsersManagerService } from '@perun-web-apps/perun/openapi';
@@ -7,6 +7,7 @@ import { getDefaultDialogConfig } from '@perun-web-apps/perun/utils';
 import { MatDialog } from '@angular/material/dialog';
 import { EditUserDialogComponent } from '../../../shared/components/dialogs/edit-user-dialog/edit-user-dialog.component';
 import { EntityStorageService, GuiAuthResolver } from '@perun-web-apps/perun/services';
+import { AnonymizeUserDialogComponent } from '@perun-web-apps/perun/dialogs';
 
 @Component({
   selector: 'app-admin-user-detail-page',
@@ -14,6 +15,12 @@ import { EntityStorageService, GuiAuthResolver } from '@perun-web-apps/perun/ser
   styleUrls: ['./admin-user-detail-page.component.scss'],
 })
 export class AdminUserDetailPageComponent implements OnInit {
+  user: User;
+  loading = false;
+  svgIcon = 'perun-user-dark';
+  private path: string;
+  private regex: string;
+
   constructor(
     private route: ActivatedRoute,
     private usersService: UsersManagerService,
@@ -21,19 +28,14 @@ export class AdminUserDetailPageComponent implements OnInit {
     private sideMenuItemService: SideMenuItemService,
     private dialog: MatDialog,
     public authResolver: GuiAuthResolver,
-    private entityStorageService: EntityStorageService
+    private entityStorageService: EntityStorageService,
+    private router: Router
   ) {}
 
-  user: User;
-  path: string;
-  regex: string;
-  loading = false;
-  svgIcon = 'perun-user-dark';
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.loading = true;
     this.route.params.subscribe((params) => {
-      const userId = params['userId'];
+      const userId = Number(params['userId']);
       this.entityStorageService.setEntity({ id: Number(userId), beanName: 'User' });
 
       this.path = `/admin/users/${userId}`;
@@ -55,7 +57,7 @@ export class AdminUserDetailPageComponent implements OnInit {
     });
   }
 
-  editUser() {
+  editUser(): void {
     const config = getDefaultDialogConfig();
     config.width = '450px';
     config.data = {
@@ -74,10 +76,27 @@ export class AdminUserDetailPageComponent implements OnInit {
     });
   }
 
-  getUserType() {
+  getUserType(): string {
     if (this.user.serviceUser) {
       return 'Service';
     }
     return 'Person';
+  }
+
+  anonymizeUser(): void {
+    const config = getDefaultDialogConfig();
+    config.width = '550px';
+    config.data = {
+      theme: 'admin-theme',
+      user: this.user,
+    };
+
+    const dialogRef = this.dialog.open(AnonymizeUserDialogComponent, config);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        void this.router.navigate(['/admin', 'users'], { queryParamsHandling: 'merge' });
+      }
+    });
   }
 }

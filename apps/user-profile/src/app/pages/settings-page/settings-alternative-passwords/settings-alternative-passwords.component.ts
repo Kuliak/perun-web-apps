@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { StoreService } from '@perun-web-apps/perun/services';
-import {
-  Attribute,
-  AttributesManagerService,
-  UsersManagerService,
-} from '@perun-web-apps/perun/openapi';
+import { AttributesManagerService, UsersManagerService } from '@perun-web-apps/perun/openapi';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ShowGeneratedPasswordDialogComponent } from '../../../components/dialogs/show-generated-password-dialog/show-generated-password-dialog.component';
@@ -19,6 +15,18 @@ import { getDefaultDialogConfig } from '@perun-web-apps/perun/utils';
   styleUrls: ['./settings-alternative-passwords.component.scss'],
 })
 export class SettingsAlternativePasswordsComponent implements OnInit {
+  altPasswordCtrl = new FormControl(null, [Validators.required]);
+  userId = this.store.getPerunPrincipal().userId;
+  removeDialogTitle: string;
+  removeDialogDescription: string;
+  passwordDescriptions = new Set<string>();
+  displayedValues: string[] = [];
+  selection = new SelectionModel<string>(false, []);
+  altPasswordsAttributeValue: Map<string, string>;
+  alertText: string;
+  headerColumnText: string;
+  loading: boolean;
+
   constructor(
     private store: StoreService,
     private attributesManagerService: AttributesManagerService,
@@ -28,36 +36,31 @@ export class SettingsAlternativePasswordsComponent implements OnInit {
   ) {
     translateService
       .get('ALT_PASSWORDS.REMOVE_DIALOG_DESCRIPTION')
-      .subscribe((value) => (this.removeDialogDescription = value));
+      .subscribe((value: string) => (this.removeDialogDescription = value));
     translateService
       .get('ALT_PASSWORDS.REMOVE_DIALOG_TITLE')
-      .subscribe((value) => (this.removeDialogTitle = value));
-    translateService.get('ALERTS.NO_ALT_PASSWORDS').subscribe((value) => (this.alertText = value));
+      .subscribe((value: string) => (this.removeDialogTitle = value));
+    translateService
+      .get('ALERTS.NO_ALT_PASSWORDS')
+      .subscribe((value: string) => (this.alertText = value));
     translateService
       .get('ALT_PASSWORDS.HEADER_COLUMN')
-      .subscribe((value) => (this.headerColumnText = value));
+      .subscribe((value: string) => (this.headerColumnText = value));
   }
 
-  altPasswordCtrl = new FormControl(null, [Validators.required]);
-  userId = this.store.getPerunPrincipal().userId;
-  removeDialogTitle: string;
-  removeDialogDescription: string;
-  passwordDescriptions = new Set<string>();
-  displayedValues: string[] = [];
-  selection = new SelectionModel<string>(false, []);
-  altPasswordsAttribute: Attribute;
-  alertText: string;
-  headerColumnText: string;
-  loading: boolean;
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.getAltPasswords();
   }
 
-  createPassword() {
+  createPassword(): void {
     const password = this.generatePassword();
     this.usersManagerService
-      .createAlternativePassword(this.userId, this.altPasswordCtrl.value, 'einfra', password)
+      .createAlternativePassword(
+        this.userId,
+        this.altPasswordCtrl.value as string,
+        'einfra',
+        password
+      )
       .subscribe(() => {
         const config = getDefaultDialogConfig();
         config.width = '600px';
@@ -88,33 +91,16 @@ export class SettingsAlternativePasswordsComponent implements OnInit {
     return retVal;
   }
 
-  private getAltPasswords() {
-    this.loading = true;
-    this.attributesManagerService
-      .getUserAttributeByName(this.userId, `urn:perun:user:attribute-def:def:altPasswords:einfra`)
-      .subscribe((att) => {
-        this.altPasswordsAttribute = att;
-        if (att.value) {
-          const foo = Object.keys(att.value);
-          this.passwordDescriptions = new Set<string>(foo);
-          this.displayedValues = Array.from(this.passwordDescriptions.values());
-        } else {
-          this.displayedValues = [];
-        }
-        this.loading = false;
-      });
-  }
-
-  alreadyContainsValue(value: string) {
+  alreadyContainsValue(value: string): boolean {
     return this.passwordDescriptions.has(value);
   }
 
-  removeAltPasswords() {
+  removeAltPasswords(): void {
     const config = getDefaultDialogConfig();
     config.width = '600px';
     config.data = {
       description: this.selection.selected,
-      passwordId: this.altPasswordsAttribute.value[this.selection.selected[0]],
+      passwordId: this.altPasswordsAttributeValue.get(this.selection.selected[0]),
       userId: this.userId,
     };
 
@@ -126,5 +112,24 @@ export class SettingsAlternativePasswordsComponent implements OnInit {
         this.selection.clear();
       }
     });
+  }
+
+  private getAltPasswords(): void {
+    this.loading = true;
+    this.attributesManagerService
+      .getUserAttributeByName(this.userId, `urn:perun:user:attribute-def:def:altPasswords:einfra`)
+      .subscribe((att) => {
+        if (att.value) {
+          this.altPasswordsAttributeValue = new Map<string, string>(
+            Object.entries(att.value as { [s: string]: string })
+          );
+          const altPasswordsKeys = this.altPasswordsAttributeValue.keys();
+          this.passwordDescriptions = new Set<string>(altPasswordsKeys);
+          this.displayedValues = Array.from(this.passwordDescriptions.values());
+        } else {
+          this.displayedValues = [];
+        }
+        this.loading = false;
+      });
   }
 }

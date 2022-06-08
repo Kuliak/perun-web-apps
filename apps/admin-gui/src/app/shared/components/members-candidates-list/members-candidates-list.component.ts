@@ -1,64 +1,61 @@
-import { AfterViewInit, Component, Input, OnChanges, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnChanges,
+  ViewChild,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  RichUser,
-  Candidate,
-  MemberCandidate,
   Attribute,
+  Candidate,
   Group,
+  MemberCandidate,
+  RichUser,
 } from '@perun-web-apps/perun/openapi';
 import {
-  getCandidateEmail,
-  getExtSourceNameOrOrganizationColumn,
-  parseUserEmail,
-  parseVo,
-  TABLE_ITEMS_COUNT_OPTIONS,
   customDataSourceFilterPredicate,
   customDataSourceSort,
   downloadData,
+  getCandidateEmail,
   getDataForExport,
+  getExtSourceNameOrOrganizationColumn,
   parseFullName,
+  parseUserEmail,
+  parseVo,
+  TABLE_ITEMS_COUNT_OPTIONS,
   TableWrapperComponent,
 } from '@perun-web-apps/perun/utils';
-import { GuiAuthResolver } from '@perun-web-apps/perun/services';
+import { GuiAuthResolver, TableCheckbox } from '@perun-web-apps/perun/services';
+import { MemberTypePipe } from '../../pipes/member-type.pipe';
 
 @Component({
   selector: 'app-members-candidates-list',
   templateUrl: './members-candidates-list.component.html',
   styleUrls: ['./members-candidates-list.component.scss'],
+  providers: [
+    {
+      provide: MemberTypePipe,
+    },
+  ],
 })
 export class MembersCandidatesListComponent implements OnChanges, AfterViewInit {
-  constructor(private guiAuthResolver: GuiAuthResolver) {}
-
-  private sort: MatSort;
-
-  @ViewChild(MatSort) set matSort(ms: MatSort) {
-    this.sort = ms;
-    this.setDataSource();
-  }
-
   @ViewChild(TableWrapperComponent, { static: true }) child: TableWrapperComponent;
-
   @Input()
   members: MemberCandidate[];
-
   @Input()
   selection: SelectionModel<MemberCandidate>;
-
   @Input()
   type: string;
-
   @Input()
   tableId: string;
-
   @Input()
   group: Group;
-
   @Input()
   blockManualAdding = false;
-
   displayedColumns: string[] = [
     'checkbox',
     'status',
@@ -70,16 +67,29 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
     'local',
   ];
   dataSource: MatTableDataSource<MemberCandidate>;
-
   pageSizeOptions = TABLE_ITEMS_COUNT_OPTIONS;
-
   addAuth = false;
+  private sort: MatSort;
 
-  getDataForColumn(
-    data: MemberCandidate,
-    column: string,
-    outerThis: MembersCandidatesListComponent
-  ): string {
+  constructor(
+    private guiAuthResolver: GuiAuthResolver,
+    private memberTypePipe: MemberTypePipe,
+    private tableCheckbox: TableCheckbox,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSource();
+  }
+
+  getDataForColumnFun = (data: MemberCandidate, column: string): string =>
+    this.getDataForColumn(data, column, this.type);
+
+  getExportDataForColumnFun = (data: MemberCandidate, column: string): string =>
+    this.getExportDataForColumn(data, column, this.type);
+
+  getDataForColumn(data: MemberCandidate, column: string, type: string): string {
     switch (column) {
       case 'status':
         return data.member ? data.member.status ?? '' : '';
@@ -95,23 +105,19 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
         if (data.richUser || data.member) {
           return parseUserEmail(data.richUser);
         }
-        return outerThis.getEmail(data);
+        return this.getEmail(data);
       case 'logins':
-        return outerThis.getLogins(data);
+        return this.getLogins(data);
       case 'alreadyMember':
-        return outerThis.getAlreadyMember(data);
+        return this.memberTypePipe.transform(data, type);
       case 'local':
         return data.richUser ? 'Local' : 'External identity';
       default:
-        return data[column];
+        return data[column] as string;
     }
   }
 
-  getExportDataForColumn(
-    data: MemberCandidate,
-    column: string,
-    outerThis: MembersCandidatesListComponent
-  ): string {
+  getExportDataForColumn(data: MemberCandidate, column: string, type: string): string {
     switch (column) {
       case 'status':
         return data.member ? data.member.status ?? '' : '';
@@ -127,74 +133,59 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
         if (data.richUser || data.member) {
           return parseUserEmail(data.richUser);
         }
-        return outerThis.getEmail(data);
+        return this.getEmail(data);
       case 'logins':
-        return outerThis.getLogins(data);
+        return this.getLogins(data);
       case 'alreadyMember':
-        return outerThis.getAlreadyMember(data);
+        return this.memberTypePipe.transform(data, type);
       case 'local':
         return data.richUser ? 'Local' : 'External identity';
       default:
-        return data[column];
+        return data[column] as string;
     }
   }
 
-  exportData(format: string) {
+  exportData(format: string): void {
     downloadData(
       getDataForExport(
         this.dataSource.filteredData,
         this.displayedColumns,
-        this.getExportDataForColumn,
-        this
+        this.getExportDataForColumnFun
       ),
       format
     );
   }
 
-  setDataSource() {
+  setDataSource(): void {
     if (this.child === null || this.child === undefined || !this.child.paginator) {
       return;
     }
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
 
-      this.dataSource.filterPredicate = (data: MemberCandidate, filter: string) =>
+      this.dataSource.filterPredicate = (data: MemberCandidate, filter: string): boolean =>
         customDataSourceFilterPredicate(
           data,
           filter,
           this.displayedColumns,
-          this.getDataForColumn,
-          this
+          this.getDataForColumnFun
         );
-      this.dataSource.sortData = (data: MemberCandidate[], sort: MatSort) =>
-        customDataSourceSort(data, sort, this.getDataForColumn, this);
+      this.dataSource.sortData = (data: MemberCandidate[], sort: MatSort): MemberCandidate[] =>
+        customDataSourceSort(data, sort, this.getDataForColumnFun);
       this.dataSource.paginator = this.child.paginator;
     }
   }
 
   ngAfterViewInit(): void {
+    this.cd.detectChanges();
     this.setDataSource();
+    this.setAddAuth();
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.dataSource = new MatTableDataSource<MemberCandidate>(this.members);
 
     this.setDataSource();
-  }
-
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      this.dataSource.data.forEach((row) => this.selection.select(row));
-    }
-    this.setAddAuth();
   }
 
   getEmail(memberCandidate: MemberCandidate): string {
@@ -209,12 +200,8 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
           break;
         }
       }
-      if (
-        email != null &&
-        email.value != null &&
-        !('null' === email.value.toString().toLowerCase())
-      ) {
-        return email.value.toString().replace(',', ' ');
+      if (email?.value != null) {
+        return (email.value as string).replace(',', ' ');
       }
       return '';
     } else {
@@ -254,8 +241,8 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
             logins += ', ';
           }
           // parse login namespace
-          const parsedNamespace = userAttribute.friendlyName.substring(16);
-          logins += parsedNamespace + ': ' + userAttribute.value;
+          const parsedNamespace: string = userAttribute.friendlyName.substring(16);
+          logins += parsedNamespace + ': ' + (userAttribute.value as string);
         }
       }
     }
@@ -267,7 +254,7 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
     let logins = '';
     for (const prop in candidate.attributes) {
       if (Object.prototype.hasOwnProperty.call(candidate.attributes, prop)) {
-        if (prop.indexOf('urn:perun:user:attribute-def:def:login-namespace:') !== -1) {
+        if (prop.includes('urn:perun:user:attribute-def:def:login-namespace:')) {
           if (candidate.attributes[prop] != null) {
             if (logins.length > 0) {
               logins += ', ';
@@ -280,27 +267,6 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
       }
     }
     return logins;
-  }
-
-  getAlreadyMember(memberCandidate: MemberCandidate): string {
-    if (this.type === 'vo') {
-      if (memberCandidate.member != null) return 'Member of VO';
-    } else {
-      if (
-        memberCandidate.member != null &&
-        memberCandidate.member.sourceGroupId !== 0 &&
-        memberCandidate.member.membershipType === 'DIRECT'
-      )
-        return 'Member of Group';
-      if (
-        memberCandidate.member != null &&
-        memberCandidate.member.sourceGroupId !== 0 &&
-        memberCandidate.member.membershipType === 'INDIRECT'
-      )
-        return 'Indirect member of Group';
-      if (memberCandidate.member != null) return 'Member of VO';
-    }
-    return '';
   }
 
   isCheckboxDisabled(memberCandidate: MemberCandidate): boolean {
@@ -317,9 +283,9 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
     return this.blockManualAdding;
   }
 
-  setAddAuth() {
+  setAddAuth(): void {
     if (this.group !== undefined && this.selection.selected.length !== 0) {
-      if (this.selection.selected[0].member) {
+      if (this.selection.selected.every((selected) => selected.member)) {
         this.addAuth = true;
       } else {
         this.addAuth =
@@ -333,14 +299,45 @@ export class MembersCandidatesListComponent implements OnChanges, AfterViewInit 
     }
   }
 
-  itemSelectionToggle(item: MemberCandidate) {
+  itemSelectionToggle(item: MemberCandidate): void {
     this.selection.toggle(item);
     this.setAddAuth();
   }
 
-  getTooltip(memberCandidate: MemberCandidate) {
+  getTooltip(memberCandidate: MemberCandidate): string {
     return memberCandidate.member
       ? 'MEMBERS_CANDIDATES_LIST.ALREADY_MEMBER'
       : 'MEMBERS_CANDIDATES_LIST.ADDING_BLOCKED';
+  }
+
+  isAllSelected(): boolean {
+    return this.tableCheckbox.isAllSelected(
+      this.selection.selected.length,
+      '',
+      this.child.paginator.pageSize,
+      this.child.paginator.hasNextPage(),
+      this.dataSource
+    );
+  }
+
+  masterToggle(): void {
+    this.tableCheckbox.masterToggle(
+      this.isAllSelected(),
+      this.selection,
+      '',
+      this.dataSource,
+      this.sort,
+      this.child.paginator.pageSize,
+      this.child.paginator.pageIndex,
+      false
+    );
+    this.setAddAuth();
+  }
+
+  checkboxLabel(selected?: MemberCandidate): string {
+    if (!selected) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(selected) ? 'deselect' : 'select'}`;
   }
 }

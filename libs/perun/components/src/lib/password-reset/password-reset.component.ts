@@ -13,13 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./password-reset.component.scss'],
 })
 export class PasswordResetComponent implements OnInit {
-  userId: number;
-
-  nameSpaces: string[] = [];
   logins: Attribute[] = [];
-
   displayedColumns: string[] = ['namespace', 'value', 'reset', 'change'];
   dataSource: MatTableDataSource<Attribute>;
+  private nameSpaces: string[] = [];
+  private userId: number;
 
   constructor(
     private attributesManagerService: AttributesManagerService,
@@ -32,7 +30,7 @@ export class PasswordResetComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.store.getPerunPrincipal().userId;
-    this.nameSpaces = this.store.get('password_namespace_attributes');
+    this.nameSpaces = this.store.get('password_namespace_attributes') as string[];
     this.attributesManagerService.getLogins(this.userId).subscribe((logins) => {
       const parsedNamespaces = this.nameSpaces.map((nameSpace) => {
         const elems = nameSpace.split(':');
@@ -55,15 +53,15 @@ export class PasswordResetComponent implements OnInit {
     });
   }
 
-  resetPassword(login: string) {
+  resetPassword(login: string): void {
     window.open(
       this.otherApplicationService.getUrlForOtherApplication('pwdReset', login),
       '_blank'
     );
   }
 
-  changePassword(login) {
-    this.router.navigate([], {
+  changePassword(login: Attribute): void {
+    void this.router.navigate([], {
       queryParams: {
         namespace: login.friendlyNameParameter,
       },
@@ -73,14 +71,14 @@ export class PasswordResetComponent implements OnInit {
     const config = getDefaultDialogConfig();
     config.width = '600px';
     config.data = {
-      login: login.value,
+      login: String(login.value),
       namespace: login.friendlyName.split(':')[1],
     };
 
     const dialogRef = this.dialog.open(ChangePasswordDialogComponent, config);
 
     dialogRef.afterClosed().subscribe(() => {
-      this.router.navigate([], {
+      void this.router.navigate([], {
         queryParams: {
           namespace: null,
         },

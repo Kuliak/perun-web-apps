@@ -37,10 +37,10 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="disabled">
-          <th class="center" *matHeaderCellDef mat-header-cell>
+          <th *matHeaderCellDef class="center" mat-header-cell>
             {{'VO_DETAIL.SETTINGS.APPLICATION_FORM.DISABLED_HEADER' | translate}}
           </th>
-          <td class="center" *matCellDef="let applicationFormItem" mat-cell>
+          <td *matCellDef="let applicationFormItem" class="center" mat-cell>
             <div *ngIf="applicationFormItem.disabled !== 'NEVER'">
               <mat-icon class="pointer" [matTooltip]="disabledTooltip(applicationFormItem)"
                 >lock
@@ -51,10 +51,10 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="hidden">
-          <th class="center" *matHeaderCellDef mat-header-cell>
+          <th *matHeaderCellDef class="center" mat-header-cell>
             {{'VO_DETAIL.SETTINGS.APPLICATION_FORM.HIDDEN_HEADER' | translate}}
           </th>
-          <td class="center" *matCellDef="let applicationFormItem" mat-cell>
+          <td *matCellDef="let applicationFormItem" class="center" mat-cell>
             <div *ngIf="applicationFormItem.hidden !== 'NEVER'">
               <mat-icon class="pointer" [matTooltip]="hiddenTooltip(applicationFormItem)"
                 >visibility_off
@@ -205,6 +205,16 @@
                 <input type="checkbox" /> example group3
               </form>
             </div>
+            <div *ngIf="applicationFormItem.type === 'LIST_INPUT_BOX'">
+              <perun-web-apps-attribute-value-list
+                [attribute]="{id: 0, beanName: 'Attribute', namespace: '', value: ['Example 1', 'Example 2']}">
+              </perun-web-apps-attribute-value-list>
+            </div>
+            <div *ngIf="applicationFormItem.type === 'MAP_INPUT_BOX'">
+              <perun-web-apps-attribute-value-map
+                [attribute]="{id: 0, beanName: 'Attribute', namespace: '', value: {key1: 'value 1', key2: 'value 2'}}">
+              </perun-web-apps-attribute-value-map>
+            </div>
           </td>
         </ng-container>
         <ng-container matColumnDef="managegroups">
@@ -213,8 +223,8 @@
             <button
               (click)="openManagingGroups()"
               mat-icon-button
-              matTooltip="{{'VO_DETAIL.SETTINGS.APPLICATION_FORM.MANAGE_GROUPS' | translate}}"
-              *ngIf="applicationFormItem.type === 'EMBEDDED_GROUP_APPLICATION' && !applicationFormItem.forDelete">
+              *ngIf="applicationFormItem.type === 'EMBEDDED_GROUP_APPLICATION' && !applicationFormItem.forDelete"
+              matTooltip="{{'VO_DETAIL.SETTINGS.APPLICATION_FORM.MANAGE_GROUPS' | translate}}">
               <mat-icon>supervised_user_circle</mat-icon>
             </button>
           </td>
@@ -273,6 +283,6 @@
   </div>
 </div>
 
-<app-alert *ngIf="this.applicationFormItems.length === 0 && !loading" alert_type="warn">
+<perun-web-apps-alert *ngIf="this.applicationFormItems.length === 0 && !loading" alert_type="warn">
   {{'VO_DETAIL.SETTINGS.APPLICATION_FORM.NO_APPLICATION_FORM' | translate}}
-</app-alert>
+</perun-web-apps-alert>

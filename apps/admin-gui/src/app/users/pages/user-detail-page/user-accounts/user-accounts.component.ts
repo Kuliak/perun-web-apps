@@ -8,6 +8,7 @@ import {
   Vo,
 } from '@perun-web-apps/perun/openapi';
 import { ActivatedRoute } from '@angular/router';
+import { Urns } from '@perun-web-apps/perun/urns';
 
 @Component({
   selector: 'app-perun-web-apps-user-accounts',
@@ -15,6 +16,14 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./user-accounts.component.css'],
 })
 export class UserAccountsComponent implements OnInit {
+  initLoading = false;
+  loading = false;
+  vos: Vo[] = [];
+  selectedVo: Vo = null;
+  member: Member = null;
+  groups: RichGroup[] = [];
+  userId: number;
+
   constructor(
     private route: ActivatedRoute,
     private usersService: UsersManagerService,
@@ -22,21 +31,10 @@ export class UserAccountsComponent implements OnInit {
     private groupService: GroupsManagerService
   ) {}
 
-  initLoading = false;
-  loading = false;
-
-  vos: Vo[] = [];
-  selectedVo: Vo = null;
-
-  member: Member = null;
-
-  groups: RichGroup[] = [];
-
-  userId: number;
   ngOnInit(): void {
     this.initLoading = true;
     this.route.parent.params.subscribe((params) => {
-      this.userId = params['userId'];
+      this.userId = Number(params['userId']);
       this.usersService.getVosWhereUserIsMember(this.userId).subscribe(
         (vos) => {
           this.vos = vos;
@@ -47,7 +45,7 @@ export class UserAccountsComponent implements OnInit {
     });
   }
 
-  loadMember(vo: Vo) {
+  loadMember(vo: Vo): void {
     this.loading = true;
     this.selectedVo = vo;
     this.membersService.getMemberByUser(this.selectedVo.id, this.userId).subscribe(
@@ -55,7 +53,7 @@ export class UserAccountsComponent implements OnInit {
         this.member = member;
         this.groupService
           .getMemberRichGroupsWithAttributesByNames(this.member.id, [
-            'urn:perun:member_group:attribute-def:virt:groupStatus',
+            Urns.MEMBER_DEF_GROUP_EXPIRATION,
           ])
           .subscribe(
             (groups) => {

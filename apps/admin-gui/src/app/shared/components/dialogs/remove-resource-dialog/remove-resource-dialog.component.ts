@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { NotificatorService } from '@perun-web-apps/perun/services';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourcesManagerService, RichResource } from '@perun-web-apps/perun/openapi';
+import { DeleteDialogResult } from '@perun-web-apps/perun/dialogs';
 
 export interface RemoveResourceDialogData {
   theme: string;
@@ -16,6 +17,11 @@ export interface RemoveResourceDialogData {
   styleUrls: ['./remove-resource-dialog.component.scss'],
 })
 export class RemoveResourceDialogComponent implements OnInit {
+  displayedColumns: string[] = ['name'];
+  dataSource: MatTableDataSource<RichResource>;
+  loading = false;
+  theme: string;
+
   constructor(
     public dialogRef: MatDialogRef<RemoveResourceDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: RemoveResourceDialogData,
@@ -24,24 +30,19 @@ export class RemoveResourceDialogComponent implements OnInit {
     private resourcesManager: ResourcesManagerService
   ) {}
 
-  displayedColumns: string[] = ['name'];
-  dataSource: MatTableDataSource<RichResource>;
-  loading = false;
-  theme: string;
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.theme = this.data.theme;
     this.dataSource = new MatTableDataSource<RichResource>(this.data.resources);
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close(false);
   }
 
-  onDelete() {
+  onDelete(): void {
     this.loading = true;
     if (this.data.resources.length === 0) {
-      this.translate.get('DIALOGS.REMOVE_RESOURCES.SUCCESS').subscribe((successMessage) => {
+      this.translate.get('DIALOGS.REMOVE_RESOURCES.SUCCESS').subscribe((successMessage: string) => {
         this.loading = false;
         this.notificator.showSuccess(successMessage);
         this.dialogRef.close(true);
@@ -59,7 +60,7 @@ export class RemoveResourceDialogComponent implements OnInit {
     }
   }
 
-  onSubmit(result: { deleted: boolean; force: boolean }) {
+  onSubmit(result: DeleteDialogResult): void {
     if (result.deleted) {
       this.onDelete();
     } else {

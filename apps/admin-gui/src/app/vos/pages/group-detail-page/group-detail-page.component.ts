@@ -13,6 +13,7 @@ import {
   addRecentlyVisited,
   addRecentlyVisitedObject,
   getDefaultDialogConfig,
+  isGroupSynchronized,
 } from '@perun-web-apps/perun/utils';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityStorageService, GuiAuthResolver } from '@perun-web-apps/perun/services';
@@ -24,6 +25,8 @@ import {
 } from '@perun-web-apps/perun/dialogs';
 import { DeleteGroupDialogComponent } from '../../../shared/components/dialogs/delete-group-dialog/delete-group-dialog.component';
 import { ReloadEntityDetailService } from '../../../core/services/common/reload-entity-detail.service';
+import { destroyDetailMixin } from '../../../shared/destroy-entity-detail';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-group-detail-page',
@@ -31,20 +34,7 @@ import { ReloadEntityDetailService } from '../../../core/services/common/reload-
   styleUrls: ['./group-detail-page.component.scss'],
   animations: [fadeIn],
 })
-export class GroupDetailPageComponent implements OnInit {
-  constructor(
-    private sideMenuService: SideMenuService,
-    private voService: VosManagerService,
-    private route: ActivatedRoute,
-    private sideMenuItemService: SideMenuItemService,
-    private groupService: GroupsManagerService,
-    private dialog: MatDialog,
-    private guiAuthResolver: GuiAuthResolver,
-    private router: Router,
-    private entityStorageService: EntityStorageService,
-    private reloadEntityDetail: ReloadEntityDetailService
-  ) {}
-
+export class GroupDetailPageComponent extends destroyDetailMixin() implements OnInit {
   vo: Vo;
   group: RichGroup;
   editAuth = false;
@@ -61,23 +51,29 @@ export class GroupDetailPageComponent implements OnInit {
     Urns.GROUP_LAST_STRUCTURE_SYNC_TIMESTAMP,
   ];
 
-  ngOnInit() {
-    this.reloadEntityDetail.entityDetailChange.subscribe(() => {
+  constructor(
+    private sideMenuService: SideMenuService,
+    private voService: VosManagerService,
+    private route: ActivatedRoute,
+    private sideMenuItemService: SideMenuItemService,
+    private groupService: GroupsManagerService,
+    private dialog: MatDialog,
+    private guiAuthResolver: GuiAuthResolver,
+    private router: Router,
+    private entityStorageService: EntityStorageService,
+    private reloadEntityDetail: ReloadEntityDetailService
+  ) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.reloadEntityDetail.entityDetailChange.pipe(takeUntil(this.destroyed$)).subscribe(() => {
       this.reloadData();
     });
     this.reloadData();
   }
 
-  isSynchronized() {
-    return this.group.attributes.some(
-      (att) =>
-        att.friendlyName === 'synchronizationEnabled' &&
-        att.value !== null &&
-        att.value.toString() === 'true'
-    );
-  }
-
-  onSyncDetail() {
+  onSyncDetail(): void {
     const config = getDefaultDialogConfig();
     config.data = {
       groupId: this.group.id,
@@ -86,7 +82,7 @@ export class GroupDetailPageComponent implements OnInit {
     this.dialog.open(GroupSyncDetailDialogComponent, config);
   }
 
-  editGroup() {
+  editGroup(): void {
     const config = getDefaultDialogConfig();
     config.width = '450px';
     config.data = {
@@ -106,11 +102,11 @@ export class GroupDetailPageComponent implements OnInit {
     });
   }
 
-  reloadData() {
+  reloadData(): void {
     this.loading = true;
     this.route.params.subscribe((params) => {
-      const voId = params['voId'];
-      const groupId = params['groupId'];
+      const voId = Number(params['voId']);
+      const groupId = Number(params['groupId']);
 
       this.voService.getVoById(voId).subscribe(
         (vo) => {
@@ -137,7 +133,7 @@ export class GroupDetailPageComponent implements OnInit {
                   .subscribe(
                     (richGroup) => {
                       this.group = richGroup;
-                      this.syncEnabled = this.isSynchronized();
+                      this.syncEnabled = isGroupSynchronized(richGroup);
 
                       this.syncAuth = this.guiAuthResolver.isAuthorized(
                         'forceGroupSynchronization_Group_policy',
@@ -169,14 +165,14 @@ export class GroupDetailPageComponent implements OnInit {
     });
   }
 
-  setMenuItems() {
+  setMenuItems(): void {
     const voSideMenuItem = this.sideMenuItemService.parseVo(this.vo);
     const groupSideMenuItem = this.sideMenuItemService.parseGroup(this.group);
 
     this.sideMenuService.setAccessMenuItems([voSideMenuItem, groupSideMenuItem]);
   }
 
-  deleteGroup() {
+  deleteGroup(): void {
     const config = getDefaultDialogConfig();
     config.width = '500px';
     config.data = {
@@ -187,7 +183,7 @@ export class GroupDetailPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.router.navigate(['../'], { relativeTo: this.route });
+        void this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
   }

@@ -17,12 +17,12 @@ export interface AddApplicationFormItemDialogComponentData {
   styleUrls: ['./add-application-form-item-dialog.component.scss'],
 })
 export class AddApplicationFormItemDialogComponent implements OnInit {
-  languages = this.store.get('supported_languages');
+  languages = this.store.get('supported_languages') as string[];
 
   items: string[] = [];
   selectedItem: string;
-  selectedWidget = 'HEADING';
-  widgets = [
+  selectedWidget: Type = 'HEADING';
+  widgets: Type[] = [
     'HEADING',
     'HTML_COMMENT',
     'TEXTFIELD',
@@ -38,6 +38,8 @@ export class AddApplicationFormItemDialogComponent implements OnInit {
     'TIMEZONE',
     'AUTO_SUBMIT_BUTTON',
     'EMBEDDED_GROUP_APPLICATION',
+    'LIST_INPUT_BOX',
+    'MAP_INPUT_BOX',
   ];
   nameCtrl: FormControl;
 
@@ -48,10 +50,10 @@ export class AddApplicationFormItemDialogComponent implements OnInit {
     private store: StoreService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.translateService
       .get('DIALOGS.APPLICATION_FORM_ADD_ITEM.INSERT_TO_BEGINNING')
-      .subscribe((text) => {
+      .subscribe((text: string) => {
         this.nameCtrl = new FormControl('', [
           Validators.required,
           Validators.pattern('.*[\\S]+.*'),
@@ -61,19 +63,19 @@ export class AddApplicationFormItemDialogComponent implements OnInit {
         this.items.push(text);
         for (const item of this.data.applicationFormItems) {
           this.items.push(item.shortname);
-          if (item.type === Type.EMBEDDEDGROUPAPPLICATION) {
-            this.widgets = this.widgets.filter((type) => type !== Type.EMBEDDEDGROUPAPPLICATION);
+          if (item.type === Type.EMBEDDED_GROUP_APPLICATION) {
+            this.widgets = this.widgets.filter((type) => type !== Type.EMBEDDED_GROUP_APPLICATION);
           }
         }
         this.selectedItem = text;
       });
   }
 
-  cancel() {
-    this.dialogRef.close(false);
+  cancel(): void {
+    this.dialogRef.close(undefined);
   }
 
-  submit() {
+  submit(): void {
     const item = this.createApplicationItem();
     this.dialogRef.close([this.data.applicationFormItems, item]);
   }
@@ -81,8 +83,8 @@ export class AddApplicationFormItemDialogComponent implements OnInit {
   createApplicationItem(): ApplicationFormItem {
     const newApplicationItem = createNewApplicationFormItem(this.languages);
     newApplicationItem.id = this.data.fakeId;
-    newApplicationItem.shortname = this.nameCtrl.value;
-    newApplicationItem.type = this.selectedWidget as Type;
+    newApplicationItem.shortname = this.nameCtrl.value as string;
+    newApplicationItem.type = this.selectedWidget;
     for (let i = 0; i < this.items.length; i++) {
       if (this.selectedItem === this.items[i]) {
         this.data.applicationFormItems.splice(i, 0, newApplicationItem);

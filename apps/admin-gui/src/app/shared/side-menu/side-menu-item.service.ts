@@ -5,6 +5,7 @@ import {
   ApiRequestConfigurationService,
   GuiAuthResolver,
   NotificatorService,
+  StoreService,
 } from '@perun-web-apps/perun/services';
 import {
   AttributesManagerService,
@@ -17,14 +18,31 @@ import {
   Vo,
 } from '@perun-web-apps/perun/openapi';
 import { parseFullName } from '@perun-web-apps/perun/utils';
-import { StoreService } from '@perun-web-apps/perun/services';
 import { GetResourceRoutePipe } from '@perun-web-apps/perun/pipes';
 import { Urns } from '@perun-web-apps/perun/urns';
+import { RPCError } from '@perun-web-apps/perun/models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SideMenuItemService {
+  baseItemColor = this.store.get('theme', 'sidemenu_bg_color') as string;
+  voBgColor = this.store.get('theme', 'sidemenu_vo_bg_color') as string;
+  memberBgColor = this.store.get('theme', 'sidemenu_member_bg_color') as string;
+  groupBgColor = this.store.get('theme', 'sidemenu_group_bg_color') as string;
+  facilityBgColor = this.store.get('theme', 'sidemenu_facility_bg_color') as string;
+  resourceBgColor = this.store.get('theme', 'sidemenu_resource_bg_color') as string;
+  userBgColor = this.store.get('theme', 'sidemenu_user_bg_color') as string;
+  serviceBgColor = this.store.get('theme', 'sidemenu_service_bg_color') as string;
+  baseItemTextColor = this.store.get('theme', 'sidemenu_text_color') as string;
+  voTextColor = this.store.get('theme', 'sidemenu_vo_text_color') as string;
+  memberTextColor = this.store.get('theme', 'sidemenu_member_text_color') as string;
+  groupTextColor = this.store.get('theme', 'sidemenu_group_text_color') as string;
+  facilityTextColor = this.store.get('theme', 'sidemenu_facility_text_color') as string;
+  resourceTextColor = this.store.get('theme', 'sidemenu_resource_text_color') as string;
+  userTextColor = this.store.get('theme', 'sidemenu_user_text_color') as string;
+  serviceTextColor = this.store.get('theme', 'sidemenu_service_text_color') as string;
+
   constructor(
     private translate: TranslateService,
     private authResolver: GuiAuthResolver,
@@ -34,24 +52,6 @@ export class SideMenuItemService {
     private notificator: NotificatorService,
     public guiAuthResolver: GuiAuthResolver
   ) {}
-
-  baseItemColor = this.store.get('theme', 'sidemenu_bg_color');
-  voBgColor = this.store.get('theme', 'sidemenu_vo_bg_color');
-  memberBgColor = this.store.get('theme', 'sidemenu_member_bg_color');
-  groupBgColor = this.store.get('theme', 'sidemenu_group_bg_color');
-  facilityBgColor = this.store.get('theme', 'sidemenu_facility_bg_color');
-  resourceBgColor = this.store.get('theme', 'sidemenu_resource_bg_color');
-  userBgColor = this.store.get('theme', 'sidemenu_user_bg_color');
-  serviceBgColor = this.store.get('theme', 'sidemenu_service_bg_color');
-
-  baseItemTextColor = this.store.get('theme', 'sidemenu_text_color');
-  voTextColor = this.store.get('theme', 'sidemenu_vo_text_color');
-  memberTextColor = this.store.get('theme', 'sidemenu_member_text_color');
-  groupTextColor = this.store.get('theme', 'sidemenu_group_text_color');
-  facilityTextColor = this.store.get('theme', 'sidemenu_facility_text_color');
-  resourceTextColor = this.store.get('theme', 'sidemenu_resource_text_color');
-  userTextColor = this.store.get('theme', 'sidemenu_user_text_color');
-  serviceTextColor = this.store.get('theme', 'sidemenu_service_text_color');
 
   getFacilitiesManagementItem(): SideMenuItem {
     return {
@@ -213,7 +213,7 @@ export class SideMenuItemService {
               activatedRegex: '^/admin/visualizer/attrDependencies',
             },
             {
-              label: this.translate.instant('MENU_ITEMS.VISUALIZER.USER_DESTINATION'),
+              label: this.translate.instant('MENU_ITEMS.VISUALIZER.USER_DESTINATION') as string,
               url: ['/admin/visualizer/userDestinationRelationship'],
               activatedRegex: '^/admin/visualizer/userDestinationRelationship',
             },
@@ -276,70 +276,6 @@ export class SideMenuItemService {
     };
   }
 
-  private getResourceLinks(baseUrl: string, regexStart: string, resource: Resource) {
-    const links: EntityMenuLink[] = [
-      {
-        label: 'MENU_ITEMS.RESOURCE.OVERVIEW',
-        url: [baseUrl],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+$`,
-      },
-    ];
-
-    if (this.authResolver.isAuthorized('getAssignedGroups_Resource_policy', [resource])) {
-      links.push({
-        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_GROUPS',
-        url: [baseUrl, 'groups'],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+/groups$`,
-      });
-    }
-    if (this.authResolver.isAuthorized('getAssignedServices_Resource_policy', [resource])) {
-      links.push({
-        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_SERVICES',
-        url: [baseUrl, 'services'],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+/services$`,
-      });
-    }
-    if (this.authResolver.isAuthorized('getAssignedMembers_Resource_policy', [resource])) {
-      links.push({
-        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_MEMBERS',
-        url: [baseUrl, 'members'],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+/members$`,
-      });
-    }
-    if (
-      this.authResolver.isAuthorized('getAllResourcesTagsForResource_Resource_policy', [resource])
-    ) {
-      links.push({
-        label: 'MENU_ITEMS.RESOURCE.RESOURCE_TAGS',
-        url: [baseUrl, 'tags'],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+/tags$`,
-      });
-    }
-    links.push({
-      label: 'MENU_ITEMS.RESOURCE.ATTRIBUTES',
-      url: [baseUrl, `attributes`],
-      activatedRegex: `${regexStart}/\\d+/resources/\\d+/attributes$`,
-    });
-
-    if (this.authResolver.isManagerPagePrivileged(resource)) {
-      links.push({
-        label: 'MENU_ITEMS.RESOURCE.SETTINGS',
-        url: [baseUrl, `settings`],
-        activatedRegex: `${regexStart}/\\d+/resources/\\d+/settings$`,
-        children: [
-          {
-            label: 'MENU_ITEMS.RESOURCE.MANAGERS',
-            url: [baseUrl, `settings`, `managers`],
-            activatedRegex: `${regexStart}/\\d+/resources/\\d+/settings/managers$`,
-          },
-        ],
-        showChildrenRegex: `${regexStart}/\\d+/resources/\\d+/settings`,
-      });
-    }
-
-    return links;
-  }
-
   parseGroup(group: Group): SideMenuItem {
     return {
       label: group.name,
@@ -355,11 +291,11 @@ export class SideMenuItemService {
     };
   }
 
-  parseVo(vo: Vo, isHierarchical = false): SideMenuItem {
+  parseVo(vo: Vo, isHierarchical = false, isMemberVo = false): SideMenuItem {
     return {
       label: vo.name,
       baseLink: [`/organizations/${vo.id}`],
-      links: this.getVoLinks(vo),
+      links: this.getVoLinks(vo, isMemberVo),
       colorClass: 'vo-item',
       icon: isHierarchical ? 'perun-hierarchical-vo' : 'perun-vo',
       // labelClass: 'vo-text',
@@ -454,7 +390,7 @@ export class SideMenuItemService {
     };
   }
 
-  getVoLinks(vo: Vo): EntityMenuLink[] {
+  getVoLinks(vo: Vo, isMemberVo: boolean): EntityMenuLink[] {
     const links: EntityMenuLink[] = [];
 
     // Overview
@@ -465,7 +401,9 @@ export class SideMenuItemService {
     });
 
     // Members
-    if (this.authResolver.isAuthorized('getCompleteRichMembers_Vo_List<String>_policy', [vo])) {
+    if (
+      this.authResolver.isAuthorized('getMembersPage_Vo_MembersPageQuery_List<String>_policy', [vo])
+    ) {
       links.push({
         label: 'MENU_ITEMS.VO.MEMBERS',
         url: [`/organizations/${vo.id}/members`],
@@ -584,7 +522,7 @@ export class SideMenuItemService {
     const adminOrObserver = this.authResolver.isThisVoAdminOrObserver(vo.id);
 
     if (managersAuth || extSourcesAuth || adminOrObserver) {
-      const children = [];
+      const children: SideMenuItemChild[] = [];
 
       // Membership
       if (adminOrObserver) {
@@ -637,6 +575,15 @@ export class SideMenuItemService {
           label: 'MENU_ITEMS.VO.MEMBER_ORGANIZATIONS',
           url: [`/organizations/${vo.id}/settings/memberOrganizations`],
           activatedRegex: '/organizations/\\d+/settings/memberOrganizations',
+        });
+      }
+
+      // Hierarchical inclusion
+      if (this.authResolver.isPerunAdmin() && isMemberVo) {
+        children.push({
+          label: 'MENU_ITEMS.VO.HIERARCHICAL_INCLUSION',
+          url: [`/organizations/${vo.id}/settings/hierarchicalInclusion`],
+          activatedRegex: '/organizations/\\d+/settings/hierarchicalInclusion',
         });
       }
 
@@ -861,7 +808,7 @@ export class SideMenuItemService {
     }
     links.push({
       label: 'MENU_ITEMS.FACILITY.ATTRIBUTES',
-      url: ['/facilities', facility.id, 'attributes'],
+      url: ['/facilities', facility.id.toString(), 'attributes'],
       activatedRegex: '/facilities/\\d+/attributes$',
     });
 
@@ -878,13 +825,13 @@ export class SideMenuItemService {
     );
 
     if (bansAuth || managersAuth || ownersAuth || securityAuth) {
-      const children = [];
+      const children: EntityMenuLink[] = [];
 
       // Owners
       if (ownersAuth) {
         children.push({
           label: 'MENU_ITEMS.FACILITY.OWNERS',
-          url: ['/facilities', facility.id, 'settings', 'owners'],
+          url: ['/facilities', facility.id.toString(), 'settings', 'owners'],
           activatedRegex: '/facilities/\\d+/settings/owners$',
         });
       }
@@ -892,7 +839,7 @@ export class SideMenuItemService {
       if (managersAuth) {
         children.push({
           label: 'MENU_ITEMS.FACILITY.MANAGERS',
-          url: ['/facilities', facility.id, 'settings', 'managers'],
+          url: ['/facilities', facility.id.toString(), 'settings', 'managers'],
           activatedRegex: '/facilities/\\d+/settings/managers$',
         });
       }
@@ -909,14 +856,14 @@ export class SideMenuItemService {
       if (bansAuth) {
         children.push({
           label: 'MENU_ITEMS.FACILITY.BLACKLIST',
-          url: ['facilities', facility.id, 'settings', 'blacklist'],
+          url: ['facilities', facility.id.toString(), 'settings', 'blacklist'],
           activatedRegex: '/facilities/\\d+/settings/blacklist',
         });
       }
 
       links.push({
         label: 'MENU_ITEMS.FACILITY.SETTINGS',
-        url: ['/facilities', facility.id, 'settings'],
+        url: ['/facilities', facility.id.toString(), 'settings'],
         activatedRegex: '/facilities/\\d+/settings$',
         children: children,
         showChildrenRegex: '/facilities/\\d+/settings',
@@ -938,9 +885,10 @@ export class SideMenuItemService {
 
     //Members
     if (
-      this.authResolver.isAuthorized('getCompleteRichMembers_Group_List<String>_boolean_policy', [
-        group,
-      ])
+      this.authResolver.isAuthorized(
+        'group-getMembersPage_Vo_MembersPageQuery_List<String>_policy',
+        [group]
+      )
     ) {
       links.push({
         label: 'MENU_ITEMS.GROUP.MEMBERS',
@@ -1024,7 +972,7 @@ export class SideMenuItemService {
             activatedRegex: '/organizations/\\d+/groups/\\d+/settings/expiration$',
           });
         },
-        (error) => {
+        (error: RPCError) => {
           if (error.name !== 'HttpErrorResponse') {
             this.notificator.showRPCError(error);
           }
@@ -1093,4 +1041,78 @@ export class SideMenuItemService {
 
     return links;
   }
+
+  private getResourceLinks(
+    baseUrl: string,
+    regexStart: string,
+    resource: Resource
+  ): EntityMenuLink[] {
+    const links: EntityMenuLink[] = [
+      {
+        label: 'MENU_ITEMS.RESOURCE.OVERVIEW',
+        url: [baseUrl],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+$`,
+      },
+    ];
+
+    if (this.authResolver.isAuthorized('getAssignedGroups_Resource_policy', [resource])) {
+      links.push({
+        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_GROUPS',
+        url: [baseUrl, 'groups'],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+/groups$`,
+      });
+    }
+    if (this.authResolver.isAuthorized('getAssignedServices_Resource_policy', [resource])) {
+      links.push({
+        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_SERVICES',
+        url: [baseUrl, 'services'],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+/services$`,
+      });
+    }
+    if (this.authResolver.isAuthorized('getAssignedMembers_Resource_policy', [resource])) {
+      links.push({
+        label: 'MENU_ITEMS.RESOURCE.ASSIGNED_MEMBERS',
+        url: [baseUrl, 'members'],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+/members$`,
+      });
+    }
+    if (
+      this.authResolver.isAuthorized('getAllResourcesTagsForResource_Resource_policy', [resource])
+    ) {
+      links.push({
+        label: 'MENU_ITEMS.RESOURCE.RESOURCE_TAGS',
+        url: [baseUrl, 'tags'],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+/tags$`,
+      });
+    }
+    links.push({
+      label: 'MENU_ITEMS.RESOURCE.ATTRIBUTES',
+      url: [baseUrl, `attributes`],
+      activatedRegex: `${regexStart}/\\d+/resources/\\d+/attributes$`,
+    });
+
+    if (this.authResolver.isManagerPagePrivileged(resource)) {
+      links.push({
+        label: 'MENU_ITEMS.RESOURCE.SETTINGS',
+        url: [baseUrl, `settings`],
+        activatedRegex: `${regexStart}/\\d+/resources/\\d+/settings$`,
+        children: [
+          {
+            label: 'MENU_ITEMS.RESOURCE.MANAGERS',
+            url: [baseUrl, `settings`, `managers`],
+            activatedRegex: `${regexStart}/\\d+/resources/\\d+/settings/managers$`,
+          },
+        ],
+        showChildrenRegex: `${regexStart}/\\d+/resources/\\d+/settings`,
+      });
+    }
+
+    return links;
+  }
+}
+
+interface SideMenuItemChild {
+  label: string;
+  url: string[];
+  activatedRegex: string;
 }

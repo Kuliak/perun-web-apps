@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  Inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -13,7 +14,9 @@ import {
   PreferredLanguageService,
 } from '@perun-web-apps/perun/services';
 import { AttributesManagerService } from '@perun-web-apps/perun/openapi';
-import { TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'perun-web-apps-root',
@@ -21,8 +24,15 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  public static minWidth = 992;
+  static minWidth = 992;
+  @ViewChild('footer') footer: ElementRef<HTMLDivElement>;
   sidebarMode: 'over' | 'push' | 'side' = 'side';
+  sideMenuBgColor = this.store.get('theme', 'sidemenu_bg_color') as string;
+  contentBackgroundColor = this.store.get('theme', 'content_bg_color') as string;
+  isLoginScreenShown: boolean;
+  isServiceAccess: boolean;
+  contentHeight = 'calc(100vh - 84px)';
+  headerLabel = this.store.get('header_label_en') as string;
 
   constructor(
     private store: StoreService,
@@ -30,27 +40,32 @@ export class AppComponent implements OnInit, AfterViewInit {
     private translateService: TranslateService,
     private initAuth: InitAuthService,
     private changeDetector: ChangeDetectorRef,
-    private preferredLangService: PreferredLanguageService
+    private preferredLangService: PreferredLanguageService,
+    private titleService: Title,
+    @Inject(DOCUMENT) private document: Document
   ) {
     this.getScreenSize();
   }
 
-  sideMenuBgColor = this.store.get('theme', 'sidemenu_bg_color');
-  contentBackgroundColor = this.store.get('theme', 'content_bg_color');
-  isLoginScreenShown: boolean;
-  isServiceAccess: boolean;
-  contentHeight = 'calc(100vh - 84px)';
-  headerLabel = this.store.get('header_label_en');
-  @ViewChild('footer') footer: ElementRef;
+  @HostListener('window:resize', ['$event'])
+  getScreenSize(): void {
+    this.sidebarMode = this.isMobile() ? 'over' : 'side';
+  }
 
   ngOnInit(): void {
+    this.translateService.onLangChange.subscribe((langChange: LangChangeEvent) => {
+      const title: string = this.store.get('document_title', langChange.lang) as string;
+      this.titleService.setTitle(title);
+      this.document.documentElement.lang = langChange.lang;
+    });
+
     this.isLoginScreenShown = this.initAuth.isLoginScreenShown();
     this.isServiceAccess = this.initAuth.isServiceAccessLoginScreenShown();
     sessionStorage.removeItem('baLogout');
     if (this.isLoginScreenShown) {
       this.headerLabel = this.store.get(
         `header_label_${this.preferredLangService.getPreferredLanguage(null)}`
-      );
+      ) as string;
       return;
     }
     if (this.isServiceAccess) {
@@ -60,16 +75,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       .getUserAttributes(this.store.getPerunPrincipal().userId)
       .subscribe((atts) => {
         const userPrefLang = atts.find((elem) => elem.friendlyName === 'preferredLanguage');
-        const userLang = userPrefLang && userPrefLang.value ? userPrefLang.value.toString() : null;
+        const userLang = (userPrefLang?.value as string) ?? null;
 
         const prefLang = this.preferredLangService.getPreferredLanguage(userLang);
         this.translateService.use(prefLang);
       });
-  }
-
-  @HostListener('window:resize', ['$event'])
-  getScreenSize() {
-    this.sidebarMode = this.isMobile() ? 'over' : 'side';
   }
 
   isMobile(): boolean {
@@ -81,7 +91,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.contentHeight = 'calc(100vh - 84px - ' + this.footer.nativeElement.offsetHeight + 'px)';
+    const footerHeight: string = this.footer?.nativeElement?.offsetHeight?.toString() ?? '0';
+    this.contentHeight = 'calc(100vh - 84px - ' + footerHeight + 'px)';
     this.changeDetector.detectChanges();
   }
 }
