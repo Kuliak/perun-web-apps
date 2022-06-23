@@ -1,9 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { SideMenuService } from '../../../../../core/services/common/side-menu.service';
 import { Router } from '@angular/router';
 import { MenuItem } from '@perun-web-apps/perun/models';
 import { Vo, VosManagerService } from '@perun-web-apps/perun/openapi';
-import { EntityStorageService, GuiAuthResolver } from '@perun-web-apps/perun/services';
+import { EntityStorageService, RoutePolicyService } from '@perun-web-apps/perun/services';
 
 @Component({
   selector: 'app-vo-settings-overview',
@@ -19,11 +18,10 @@ export class VoSettingsOverviewComponent implements OnInit {
   private vo: Vo;
 
   constructor(
-    private sideMenuService: SideMenuService,
     private voService: VosManagerService,
-    private authResolver: GuiAuthResolver,
     protected router: Router,
-    private entityStorageService: EntityStorageService
+    private entityStorageService: EntityStorageService,
+    private routePolicyService: RoutePolicyService
   ) {}
 
   ngOnInit(): void {
@@ -38,10 +36,9 @@ export class VoSettingsOverviewComponent implements OnInit {
 
   private initItems(): void {
     this.items = [];
-    const adminOrObserver = this.authResolver.isThisVoAdminOrObserver(this.vo.id);
 
     // Membership
-    if (adminOrObserver) {
+    if (this.routePolicyService.canNavigate('organizations-settings-expiration', this.vo)) {
       this.items.push({
         cssIcon: 'perun-group',
         url: `/organizations/${this.vo.id}/settings/expiration`,
@@ -50,7 +47,7 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Managers
-    if (this.authResolver.isManagerPagePrivileged(this.vo)) {
+    if (this.routePolicyService.canNavigate('organizations-settings-managers', this.vo)) {
       this.items.push({
         cssIcon: 'perun-manager',
         url: `/organizations/${this.vo.id}/settings/managers`,
@@ -59,7 +56,7 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Application forms
-    if (adminOrObserver) {
+    if (this.routePolicyService.canNavigate('organizations-settings-applicationForm', this.vo)) {
       this.items.push({
         cssIcon: 'perun-application-form',
         url: `/organizations/${this.vo.id}/settings/applicationForm`,
@@ -68,7 +65,7 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Notifications
-    if (adminOrObserver) {
+    if (this.routePolicyService.canNavigate('organizations-settings-notifications', this.vo)) {
       this.items.push({
         cssIcon: 'perun-notification',
         url: `/organizations/${this.vo.id}/settings/notifications`,
@@ -77,7 +74,7 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Ext sources
-    if (this.authResolver.isAuthorized('getVoExtSources_Vo_policy', [this.vo])) {
+    if (this.routePolicyService.canNavigate('organizations-settings-extsources', this.vo)) {
       this.items.push({
         cssIcon: 'perun-external-sources',
         url: `/organizations/${this.vo.id}/settings/extsources`,
@@ -86,7 +83,9 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Member organizations
-    if (this.authResolver.isPerunAdmin()) {
+    if (
+      this.routePolicyService.canNavigate('organizations-settings-memberOrganizations', this.vo)
+    ) {
       this.items.push({
         cssIcon: 'perun-hierarchical-vo',
         url: `/organizations/${this.vo.id}/settings/memberOrganizations`,
@@ -95,7 +94,13 @@ export class VoSettingsOverviewComponent implements OnInit {
       });
     }
     // Hierarchical inclusion
-    if (this.authResolver.isPerunAdmin() && this.isMemberOfSomeOrganization) {
+    if (
+      this.routePolicyService.canNavigate(
+        'organizations-settings-hierarchicalInclusion',
+        this.vo
+      ) &&
+      this.isMemberOfSomeOrganization
+    ) {
       this.items.push({
         cssIcon: 'perun-hierarchical-inclusion',
         url: `/organizations/${this.vo.id}/settings/hierarchicalInclusion`,

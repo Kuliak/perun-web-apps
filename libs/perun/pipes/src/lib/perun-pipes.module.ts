@@ -17,6 +17,8 @@ import { MemberEmailPipe } from './member-email.pipe';
 import { MemberLoginsPipe } from './member-logins.pipe';
 import { GroupExpirationPipe } from './group-expiration.pipe';
 import { MemberOrganizationPipe } from './member-organization.pipe';
+import { MemberListCheckboxDisabledPipe } from './member-list-checkbox-disabled.pipe';
+import { MemberCheckboxLabelPipe } from './member-checkbox-label.pipe';
 import { ParseDatePipe } from './parse-date.pipe';
 import { TechnicalOwnersPipe } from './technical-owners.pipe';
 import { FilterUniqueObjectsPipe } from './filter-unique-objects.pipe';
@@ -34,6 +36,7 @@ import { FooterLogoPathPipe } from './footer-logo-path.pipe';
 import { DeleteDialogTypePipe } from './delete-dialog-type.pipe';
 import { GroupMembersActionButtonDisabledPipe } from './group-members-action-button-disabled.pipe';
 import { GroupMembersActionButtonDisabledTooltipPipe } from './group-members-action-button-disabled-tooltip.pipe';
+import { DisabledCandidateTooltipPipe } from './disabled-candidate-tooltip.pipe';
 
 @NgModule({
   declarations: [
@@ -54,6 +57,8 @@ import { GroupMembersActionButtonDisabledTooltipPipe } from './group-members-act
     MemberEmailPipe,
     MemberLoginsPipe,
     MemberOrganizationPipe,
+    MemberListCheckboxDisabledPipe,
+    MemberCheckboxLabelPipe,
     GroupExpirationPipe,
     ParseDatePipe,
     TechnicalOwnersPipe,
@@ -72,6 +77,7 @@ import { GroupMembersActionButtonDisabledTooltipPipe } from './group-members-act
     DeleteDialogTypePipe,
     GroupMembersActionButtonDisabledPipe,
     GroupMembersActionButtonDisabledTooltipPipe,
+    DisabledCandidateTooltipPipe,
   ],
   exports: [
     ResourceTagsToStringPipe,
@@ -92,6 +98,8 @@ import { GroupMembersActionButtonDisabledTooltipPipe } from './group-members-act
     MemberLoginsPipe,
     GroupExpirationPipe,
     MemberOrganizationPipe,
+    MemberListCheckboxDisabledPipe,
+    MemberCheckboxLabelPipe,
     ParseDatePipe,
     TechnicalOwnersPipe,
     FilterUniqueObjectsPipe,
@@ -109,6 +117,7 @@ import { GroupMembersActionButtonDisabledTooltipPipe } from './group-members-act
     DeleteDialogTypePipe,
     GroupMembersActionButtonDisabledPipe,
     GroupMembersActionButtonDisabledTooltipPipe,
+    DisabledCandidateTooltipPipe,
   ],
   imports: [CommonModule],
 })
