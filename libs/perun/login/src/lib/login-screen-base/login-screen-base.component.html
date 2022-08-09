@@ -2,17 +2,18 @@
   [ngStyle]="{'background': headerBackgroundColor, color: headerTextColor}"
   id="login-nav"
   class="mat-elevation-z3">
-  <div *ngIf="application === 'admin-gui'" class="mt-auto mb-auto">
+  <div
+    *ngIf="application === 'admin-gui' ||
+              application === 'user-profile' ||
+              application === 'consolidator'"
+    class="mt-auto mb-auto">
     <div [innerHTML]="logo" class="logo-container"></div>
   </div>
-  <div *ngIf="application === 'publications'" style=" display: flex; flex-direction: row;">
+  <div *ngIf="application === 'publications'" class="display-flex-row">
     <div [innerHTML]="logo" class="logo-container mt-auto mb-auto"></div>
     <mat-icon
       svgIcon="perun-publications-white"
       class="mt-auto mb-auto router-icon ml-2 mr-2"></mat-icon>
-  </div>
-  <div *ngIf="application === 'user-profile'" class="mt-auto mb-auto">
-    <a class="logo-container" [innerHTML]="logo"></a>
   </div>
   <p
     *ngIf="!!headerTitle"

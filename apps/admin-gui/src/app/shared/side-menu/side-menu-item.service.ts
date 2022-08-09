@@ -354,6 +354,11 @@ export class SideMenuItemService {
           url: [`/myProfile/service-identities/${user.id}/associated-users`],
           activatedRegex: '/myProfile/service-identities/\\d+/associated-users',
         },
+        {
+          label: 'MENU_ITEMS.USER.AUTHENTICATION',
+          url: [`/myProfile/service-identities/${user.id}/authentication`],
+          activatedRegex: '/myProfile/service-identities/\\d+/authentication',
+        },
       ],
       colorClass: 'user-bg-color',
       icon: 'perun-service-identity',
@@ -916,6 +921,15 @@ export class SideMenuItemService {
         label: 'MENU_ITEMS.GROUP.STATISTICS',
         url: [`/organizations/${group.voId}/groups/${group.id}/statistics`],
         activatedRegex: '/organizations/\\d+/groups/\\d+/statistics',
+      });
+    }
+
+    //Roles
+    if (this.routePolicyService.canNavigate('groups-roles', group)) {
+      links.push({
+        label: 'MENU_ITEMS.GROUP.ROLES',
+        url: [`/organizations/${group.voId}/groups/${group.id}/roles`],
+        activatedRegex: '/organizations/\\d+/groups/\\d+/roles',
       });
     }
 

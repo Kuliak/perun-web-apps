@@ -71,6 +71,10 @@ export class CustomIconService {
       name: 'perun-manager',
     },
     {
+      url: 'assets/img/PerunWebImages/authentication-blue.svg',
+      name: 'perun-authentication',
+    },
+    {
       url: 'assets/img/PerunWebImages/application_form-white.svg',
       name: 'perun-application-form',
     },
@@ -209,6 +213,14 @@ export class CustomIconService {
     {
       url: 'assets/img/PerunWebImages/propagation-blue.svg',
       name: 'perun-hierarchical-inclusion',
+    },
+    {
+      url: 'assets/img/PerunWebImages/verify-grey.svg',
+      name: 'perun-verify-grey',
+    },
+    {
+      url: 'assets/img/PerunWebImages/info-grey.svg',
+      name: 'perun-info-grey',
     },
   ];
 
