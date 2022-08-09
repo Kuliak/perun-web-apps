@@ -164,6 +164,7 @@
     "MFA": "Vícefázové ověření",
     "MFA_TOGGLE": "Zapnout vícefázové ověření pro všechny služby",
     "MFA_DISABLED": "Potřebujete mít alespoň jeden aktivní MFA token.",
+    "MFA_SAVE": "Uložit nastavení",
     "NEW_IMG": "Nový obrázek",
     "DELETE_IMG": "Vymazat obrázek",
     "ANTI_PHISHING_INFO": "Tento bezpečnostní obrázek se vám ukáže před tím, než zadáte heslo, ujistíte se tak, že se nepřihlašujete na podvrženou stránku",
@@ -440,6 +441,12 @@
       "ALERTS": {
         "NO_GROUPS": "Nebyly nalezeny žádné skupiny.",
         "NO_FILTER_RESULTS_ALERT": "Žádné výsledky neodpovídají daným vyhledávacím kritériím."
+      }
+    },
+    "CONSOLIDATOR": {
+      "FOCUS_ON_LINKER": {
+        "MODAL": "Modální okno je otevřeno.",
+        "MODAL_WARNING": "Prosím zkontrolujte své nastavení prohlížeče, pokud žádné modální okno nebylo otevřeno."
       }
     }
   }
