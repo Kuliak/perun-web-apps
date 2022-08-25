@@ -40,6 +40,7 @@
               formControlName="sponsoredMembers"
               matInput
               placeholder="{{this.getSelectedNamespaceRules().csvGenPlaceholder}}"
+              data-cy="generate-sponsored-members-text-input"
               rows="8">
             </textarea>
             <mat-error *ngIf="usersInfoFormGroup.hasError('required', 'sponsoredMembers')">
@@ -110,7 +111,7 @@
             (change)="groupAssigmentChanged()"
             [(ngModel)]="groupAssignment"
             class="flex-container">
-            <mat-radio-button value="none">
+            <mat-radio-button value="none" data-cy="generate-sponsored-member-no-group-assignment-radio-button">
               {{'DIALOGS.GENERATE_SPONSORED_MEMBERS.NO_ASSIGN' | translate}}
             </mat-radio-button>
             <span
@@ -200,7 +201,8 @@
       [class.ml-auto]="!(stepper !== undefined && stepper.selectedIndex !== 0)"
       [disabled]="getStepperNextConditions()"
       color="accent"
-      mat-flat-button>
+      mat-flat-button
+      data-cy="generate-sponsored-members-stepper-next">
       {{'DIALOGS.GENERATE_SPONSORED_MEMBERS.NEXT' | translate}}
     </button>
     <button
@@ -210,12 +212,13 @@
             (groupAssignment === 'existing' && selection.selected.length === 0) ||
             (groupAssignment === 'new' && (name.length === 0 || description.length === 0) || (asSubGroup === true && parentGroup === null))"
       color="accent"
-      mat-flat-button>
+      mat-flat-button
+      data-cy="generate-sponsored-members-stepper-submit">
       {{'DIALOGS.GENERATE_SPONSORED_MEMBERS.SUBMIT' | translate}}
     </button>
   </div>
   <div *ngIf='state === "results"' mat-dialog-actions>
-    <button (click)="onClose()" mat-flat-button>
+    <button (click)="onClose()" mat-flat-button data-cy="generate-sponsored-members-result-close-button">
       {{'DIALOGS.GENERATE_SPONSORED_MEMBERS.CLOSE' | translate}}
     </button>
     <button

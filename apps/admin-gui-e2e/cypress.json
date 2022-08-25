@@ -19,6 +19,8 @@
     "BA_USERNAME_FACILITY_MANAGER": "facilityManager",
     "BA_PASSWORD_FACILITY_MANAGER": "test",
     "BA_USERNAME_RESOURCE_MANAGER": "resourceManager",
-    "BA_PASSWORD_RESOURCE_MANAGER": "test"
+    "BA_PASSWORD_RESOURCE_MANAGER": "test",
+    "BA_USERNAME_SPONSOR": "voManagerSponsor",
+    "BA_PASSWORD_SPONSOR": "test"
   }
 }

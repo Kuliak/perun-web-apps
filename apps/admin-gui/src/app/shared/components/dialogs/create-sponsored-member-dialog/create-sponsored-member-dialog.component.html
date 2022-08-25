@@ -25,7 +25,8 @@
               matInput
               formControlName="firstName"
               placeholder="{{'DIALOGS.CREATE_SPONSORED_MEMBER.FIRST_NAME' | translate}}"
-              required />
+              required
+              data-cy="create-sponsored-member-first-name" />
             <mat-error *ngIf="userControl.hasError('required', 'firstName')">
               {{'DIALOGS.CREATE_SPONSORED_MEMBER.LENGTH_ERROR' | translate}}
             </mat-error>
@@ -36,7 +37,8 @@
               matInput
               formControlName="lastName"
               placeholder="{{'DIALOGS.CREATE_SPONSORED_MEMBER.LAST_NAME' | translate}}"
-              required />
+              required
+              data-cy="create-sponsored-member-last-name" />
             <mat-error *ngIf="userControl.hasError('required', 'lastName')">
               {{'DIALOGS.CREATE_SPONSORED_MEMBER.LENGTH_ERROR' | translate}}
             </mat-error>
@@ -69,8 +71,9 @@
               formControlName="namespace"
               placeholder="{{'DIALOGS.CREATE_SPONSORED_MEMBER.NAMESPACE' | translate}}"
               (valueChange)="onNamespaceChanged($event)"
-              required>
-              <mat-option *ngFor="let namespc of namespaceOptions" [value]="namespc">
+              required
+              data-cy="create-sponsored-member-select-menu">
+              <mat-option *ngFor="let namespc of namespaceOptions" [value]="namespc" data-cy="{{namespc}}-option">
                 {{namespc}}
               </mat-option>
             </mat-select>
@@ -98,6 +101,7 @@
               matInput
               placeholder="{{'DIALOGS.CREATE_SPONSORED_MEMBER.EMAIL' | translate}}"
               formControlName="email"
+              data-cy="create-sponsored-member-email"
               required />
             <mat-error
               *ngIf="namespaceControl.hasError('required', 'email') ||
@@ -216,7 +220,8 @@
       [disabled]="getStepperNextConditions()"
       color="accent"
       mat-flat-button
-      type="button">
+      type="button"
+      data-cy="create-sponsored-member-stepper-next">
       {{'DIALOGS.CREATE_SPONSORED_MEMBER.NEXT' | translate}}
     </button>
     <button
@@ -226,7 +231,8 @@
       class="ml-2"
       color="accent"
       mat-flat-button
-      type="button">
+      type="button"
+      data-cy="create-sponsored-member-stepper-submit">
       {{'DIALOGS.CREATE_SPONSORED_MEMBER.SUBMIT' | translate}}
     </button>
   </div>

@@ -11,15 +11,16 @@
       [matMenuTriggerFor]="menu"
       class="mr-2 dropdown-toggle"
       color="accent"
-      mat-flat-button>
+      mat-flat-button
+      data-cy="create-sponsored-members-button">
       {{'VO_DETAIL.SETTINGS.SPONSORED_MEMBERS.CREATE' | translate}}
     </button>
   </span>
   <mat-menu #menu="matMenu">
-    <button (click)="onCreate()" *ngIf="createAuth" class="action-button" mat-menu-item>
+    <button (click)="onCreate()" *ngIf="createAuth" class="action-button" mat-menu-item data-cy="create-sponsored-members-item-one">
       {{'VO_DETAIL.SETTINGS.SPONSORED_MEMBERS.CREATE_ONE' | translate}}
     </button>
-    <button (click)="onGenerate()" *ngIf="generateAuth" class="action-button" mat-menu-item>
+    <button (click)="onGenerate()" *ngIf="generateAuth" class="action-button" mat-menu-item data-cy="create-sponsored-members-item-generate">
       {{'VO_DETAIL.SETTINGS.SPONSORED_MEMBERS.GENERATE' | translate}}
     </button>
   </mat-menu>
@@ -28,7 +29,8 @@
     (click)="onSponsorExistingMember()"
     color="accent"
     class="mr-2 action-button"
-    mat-flat-button>
+    mat-flat-button
+    data-cy="sponsor-existing-member-button">
     {{'VO_DETAIL.SETTINGS.SPONSORED_MEMBERS.SPONSOR_EXISTING' | translate}}
   </button>
   <perun-web-apps-immediate-filter
