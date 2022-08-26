@@ -12,6 +12,7 @@ export class Urns {
   // Vo
   static VO_DEF_EXPIRATION_RULES = 'urn:perun:vo:attribute-def:def:membershipExpirationRules';
   static VO_DEF_MAIL_FOOTER = 'urn:perun:vo:attribute-def:def:mailFooter';
+  static VO_DEF_MAIL_HTML_FOOTER = 'urn:perun:vo:attribute-def:def:htmlMailFooter';
   static VO_BLOCK_MANUAL_MEMBER_ADDING = 'urn:perun:vo:attribute-def:def:blockManualMemberAdding';
 
   // User
@@ -22,6 +23,7 @@ export class Urns {
   static GROUP_DEF_EXPIRATION_RULES =
     'urn:perun:group:attribute-def:def:groupMembershipExpirationRules';
   static GROUP_DEF_MAIL_FOOTER = 'urn:perun:group:attribute-def:def:mailFooter';
+  static GROUP_DEF_MAIL_HTML_FOOTER = 'urn:perun:group:attribute-def:def:htmlMailFooter';
   static GROUP_SYNC_ENABLED = 'urn:perun:group:attribute-def:def:synchronizationEnabled';
   static GROUP_LAST_SYNC_STATE = 'urn:perun:group:attribute-def:def:lastSynchronizationState';
   static GROUP_LAST_SYNC_TIMESTAMP =
@@ -39,4 +41,5 @@ export class Urns {
   static UES_DEF_MAIL = 'urn:perun:ues:attribute-def:def:mail';
   static UES_DEF_ORGANIZATION = 'urn:perun:ues:attribute-def:def:o';
   static UES_SOURCE_IDP_NAME = 'urn:perun:ues:attribute-def:def:sourceIdPName';
+  static UES_IDP_ORGANIZATION_NAME = 'urn:perun:ues:attribute-def:def:IdPOrganizationName';
 }
